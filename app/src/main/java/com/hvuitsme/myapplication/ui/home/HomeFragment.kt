@@ -45,13 +45,16 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeSwipeRefresh.setOnRefreshListener {
-            Toast.makeText(requireContext(), "Đang làm mới.....", Toast.LENGTH_SHORT).show()
+            binding.homeLoading.visibility = View.VISIBLE
+            binding.loadingBg.visibility = View.VISIBLE
+
+            binding.homeSwipeRefresh.isRefreshing = false
+//            Toast.makeText(requireContext(), "Đang làm mới.....", Toast.LENGTH_SHORT).show()
 
             handler.postDelayed({
-                binding.homeSwipeRefresh.isRefreshing = false
-                Toast.makeText(requireContext(), "Đã làm mới xong", Toast.LENGTH_SHORT).show()
+                binding.homeLoading.visibility = View.GONE
+                binding.loadingBg.visibility = View.GONE
             }, 2000)
         }
     }
-
 }
