@@ -23,18 +23,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/name_account" />
+                android:text="@string/name_account"
+                android:textColor="@color/white"
+                android:textSize="20sp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/username_account"/>
+                android:text="@string/username_account"
+                android:textColor="@color/white"/>
 
 
         </LinearLayout>

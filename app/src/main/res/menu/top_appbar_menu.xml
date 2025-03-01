@@ -6,9 +6,4 @@
         android:icon="@drawable/ic_search"
         app:showAsAction="always"
         android:title="Search"/>
-
-    <item
-        android:icon="@drawable/ic_cart"
-        app:showAsAction="always"
-        android:title="Cart"/>
 </menu>

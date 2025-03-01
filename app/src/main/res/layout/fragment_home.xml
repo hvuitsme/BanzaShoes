@@ -19,9 +19,11 @@
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_menu"
             app:menu="@menu/top_appbar_menu"
+            app:navigationIconTint="?attr/navIconColor"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/logo_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

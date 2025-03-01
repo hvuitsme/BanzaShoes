@@ -1,15 +1,22 @@
 package com.hvuitsme.myapplication.ui.home
 
+import android.content.res.Configuration
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.GravityCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 
 import com.hvuitsme.myapplication.R
 import com.hvuitsme.myapplication.databinding.FragmentHomeBinding
@@ -61,5 +68,28 @@ class HomeFragment : Fragment() {
         binding.topAppBar.setNavigationOnClickListener {
             binding.drawlayoutFragment.openDrawer(GravityCompat.START)
         }
+
+        val headerView = binding.navView.getHeaderView(0)
+        val avatarImageView = headerView.findViewById<ImageView>(R.id.avatar)
+
+        val radiusPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            20f,
+            resources.displayMetrics
+        ).toInt()
+
+        Glide.with(requireContext())
+            .load(R.drawable.avatar1)
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(radiusPx)))
+            .into(avatarImageView)
+
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val logoRes = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            R.drawable.logo_banza_invert
+        } else {
+            R.drawable.logo_banza
+        }
+
+        binding.topAppBar.findViewById<ImageView>(R.id.logo_home)?.setImageResource(logoRes)
     }
 }
