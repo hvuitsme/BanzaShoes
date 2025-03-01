@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 
 import com.hvuitsme.myapplication.R
 import com.hvuitsme.myapplication.databinding.FragmentHomeBinding
@@ -55,6 +56,10 @@ class HomeFragment : Fragment() {
                 binding.homeLoading.visibility = View.GONE
                 binding.loadingBg.visibility = View.GONE
             }, 2000)
+        }
+
+        binding.topAppBar.setNavigationOnClickListener {
+            binding.drawlayoutFragment.openDrawer(GravityCompat.START)
         }
     }
 }

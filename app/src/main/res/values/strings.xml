@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BanzaShoes</string>
+    <string name="home">Home</string>
+    <string name="language">Language</string>
+    <string name="logout">Log out</string>
+    <string name="username_account">username</string>
+    <string name="name_account">Name</string>
 </resources>
