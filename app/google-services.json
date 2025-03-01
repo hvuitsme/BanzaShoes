@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "975745157092",
+    "project_id": "banzashoes",
+    "storage_bucket": "banzashoes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975745157092:android:9a7a9e7be40157743269f1",
+        "android_client_info": {
+          "package_name": "com.hvuitsme.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlf5-zzsY6TzpBRFmHUzyL9KOz3vcO4b4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
