@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray_200">#F5F5F5</color>
+    <color name="gray_500">#CDCDCD</color>
+    <color name="gray_700">#ABABAB</color>
+    <color name="white_translucent_20">#33FFFFFF</color>  <!-- 20% opacity -->
+    <color name="white_translucent_50">#80FFFFFF</color>  <!-- 50% opacity -->
+    <color name="white_translucent_80">#CCFFFFFF</color>  <!-- 80% opacity -->
+    <color name="red_checked">#CCBB0B0B</color>
 </resources>

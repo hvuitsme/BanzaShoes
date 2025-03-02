@@ -5,19 +5,9 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/home"
-            android:icon="@drawable/ic_house_solid"
-            android:title="@string/home" />
-
-        <item
-            android:id="@+id/cart"
-            android:icon="@drawable/ic_cart"
-            android:title="@string/cart" />
-
-        <item
-            android:id="@+id/language"
-            android:icon="@drawable/ic_language_solid"
-            android:title="@string/language" />
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings" />
     </group>
 
     <group android:checkableBehavior="single">

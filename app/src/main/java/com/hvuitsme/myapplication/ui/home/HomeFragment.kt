@@ -14,12 +14,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 
 import com.hvuitsme.myapplication.R
 import com.hvuitsme.myapplication.databinding.FragmentHomeBinding
+import com.hvuitsme.myapplication.ui.cart.CartFragment
 
 class HomeFragment : Fragment() {
 
@@ -66,22 +68,9 @@ class HomeFragment : Fragment() {
         }
 
         binding.topAppBar.setNavigationOnClickListener {
-            binding.drawlayoutFragment.openDrawer(GravityCompat.START)
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawlayout_main)
+            drawerLayout.openDrawer(GravityCompat.START)
         }
-
-        val headerView = binding.navView.getHeaderView(0)
-        val avatarImageView = headerView.findViewById<ImageView>(R.id.avatar)
-
-        val radiusPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            20f,
-            resources.displayMetrics
-        ).toInt()
-
-        Glide.with(requireContext())
-            .load(R.drawable.avatar1)
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(radiusPx)))
-            .into(avatarImageView)
 
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val logoRes = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
@@ -91,5 +80,30 @@ class HomeFragment : Fragment() {
         }
 
         binding.topAppBar.findViewById<ImageView>(R.id.logo_home)?.setImageResource(logoRes)
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId){
+                R.id.cart_toolbar -> {
+                    parentFragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.slide_in_from_right,
+                            R.anim.slide_out_to_left,
+                            R.anim.pop_slide_in_from_left,
+                            R.anim.pop_slide_out_from_right
+                        )
+                        .replace(binding.container.id, CartFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
