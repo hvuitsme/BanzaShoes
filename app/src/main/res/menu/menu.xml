@@ -10,11 +10,4 @@
             android:title="@string/settings" />
     </group>
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/logout"
-            android:icon="@drawable/ic_logout"
-            android:title="@string/logout" />
-    </group>
-
 </menu>
