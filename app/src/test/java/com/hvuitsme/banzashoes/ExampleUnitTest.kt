@@ -1,4 +1,4 @@
-package com.hvuitsme.myapplication
+package com.hvuitsme.banzashoes
 
 import org.junit.Test
 

@@ -1,27 +1,21 @@
-package com.hvuitsme.myapplication.ui.home
+package com.hvuitsme.banzashoes.ui.home
 
 import android.content.res.Configuration
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 
-import com.hvuitsme.myapplication.R
-import com.hvuitsme.myapplication.databinding.FragmentHomeBinding
-import com.hvuitsme.myapplication.ui.cart.CartFragment
+import com.hvuitsme.banzashoes.R
+import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
+import com.hvuitsme.banzashoes.ui.cart.CartFragment
 
 class HomeFragment : Fragment() {
 

@@ -1,4 +1,4 @@
-package com.hvuitsme.myapplication.ui.cart
+package com.hvuitsme.banzashoes.ui.cart
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -6,8 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.hvuitsme.myapplication.R
-import com.hvuitsme.myapplication.databinding.FragmentCartBinding
+import com.hvuitsme.banzashoes.databinding.FragmentCartBinding
 
 class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null

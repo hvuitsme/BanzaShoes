@@ -26,12 +26,14 @@
         app:menu="@menu/menu">
 
         <LinearLayout
+            android:id="@+id/ll_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="vertical"
             android:layout_marginBottom="30dp"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="16dp"
+            android:visibility="visible">
 
             <!-- Hàng Language -->
             <LinearLayout
@@ -63,7 +65,7 @@
 
             <!-- Hàng Logout -->
             <LinearLayout
-                android:id="@+id/ll_logout"
+                android:id="@+id/ll_signout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -72,14 +74,14 @@
                 android:focusable="true">
 
                 <ImageView
-                    android:id="@+id/ic_logout"
+                    android:id="@+id/ic_signout"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="10dp"
                     android:src="@drawable/ic_logout" />
 
                 <TextView
-                    android:id="@+id/tv_logout"
+                    android:id="@+id/tv_signout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"

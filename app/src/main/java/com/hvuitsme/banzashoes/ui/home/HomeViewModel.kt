@@ -1,4 +1,4 @@
-package com.hvuitsme.myapplication.ui.home
+package com.hvuitsme.banzashoes.ui.home
 
 import androidx.lifecycle.ViewModel
 

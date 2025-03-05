@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Di chuyển từ vị trí ban đầu (0%) ra ngoài màn hình bên trái (-100%) -->
     <translate
         android:fromXDelta="0%"
         android:toXDelta="-100%"
         android:duration="300" />
-    <!-- Fade out: từ hiện rõ đến trong suốt -->
     <alpha
         android:fromAlpha="1.0"
         android:toAlpha="0.0"
