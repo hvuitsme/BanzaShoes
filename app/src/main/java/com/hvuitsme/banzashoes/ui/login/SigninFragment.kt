@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.hvuitsme.banzashoes.MainActivity
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.databinding.FragmentSigninBinding
+import com.hvuitsme.banzashoes.viewmodel.SigninViewModel
 import com.hvuitsme.test2.GoogleAuthClient
 import kotlinx.coroutines.launch
 

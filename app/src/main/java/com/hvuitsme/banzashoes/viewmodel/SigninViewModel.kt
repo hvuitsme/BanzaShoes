@@ -1,4 +1,4 @@
-package com.hvuitsme.banzashoes.ui.login
+package com.hvuitsme.banzashoes.viewmodel
 
 import androidx.lifecycle.ViewModel
 

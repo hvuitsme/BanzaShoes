@@ -1,78 +1,34 @@
 {
   "project_info": {
-    "project_number": "975745157092",
-    "project_id": "banzashoes",
-    "storage_bucket": "banzashoes.firebasestorage.app"
+    "project_number": "141072870748",
+    "firebase_url": "https://banzashoes-8dde1-default-rtdb.firebaseio.com",
+    "project_id": "banzashoes-8dde1",
+    "storage_bucket": "banzashoes-8dde1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:975745157092:android:7929258ce5c7c5f33269f1",
+        "mobilesdk_app_id": "1:141072870748:android:0f7f0bd520ae8244f22599",
         "android_client_info": {
           "package_name": "com.hvuitsme.banzashoes"
         }
       },
       "oauth_client": [
         {
-          "client_id": "975745157092-rt43b18rqrq9s4ne61796u84h63dsrqq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hvuitsme.banzashoes",
-            "certificate_hash": "a36949c8a1a32d95fd623f0a4533278932642dbd"
-          }
-        },
-        {
-          "client_id": "975745157092-mdidavn8jtgsl50eofcd7v48l39cmf15.apps.googleusercontent.com",
+          "client_id": "141072870748-6blt2uc185kne4rqo13acde8hg7jqbr9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAlf5-zzsY6TzpBRFmHUzyL9KOz3vcO4b4"
+          "current_key": "AIzaSyC9WBxeu39yWHU9wolA_QJv_DmfdLQPLfA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "975745157092-mdidavn8jtgsl50eofcd7v48l39cmf15.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:975745157092:android:2417e090103e2a0d3269f1",
-        "android_client_info": {
-          "package_name": "com.hvuitsme.test2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "975745157092-blmrqc5c89j7q1ukb4bsrblnn69uukoq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hvuitsme.test2",
-            "certificate_hash": "a36949c8a1a32d95fd623f0a4533278932642dbd"
-          }
-        },
-        {
-          "client_id": "975745157092-mdidavn8jtgsl50eofcd7v48l39cmf15.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAlf5-zzsY6TzpBRFmHUzyL9KOz3vcO4b4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "975745157092-mdidavn8jtgsl50eofcd7v48l39cmf15.apps.googleusercontent.com",
+              "client_id": "141072870748-6blt2uc185kne4rqo13acde8hg7jqbr9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

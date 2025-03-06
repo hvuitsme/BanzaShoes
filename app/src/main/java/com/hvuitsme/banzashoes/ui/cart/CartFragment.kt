@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hvuitsme.banzashoes.databinding.FragmentCartBinding
+import com.hvuitsme.banzashoes.viewmodel.CartViewModel
 
 class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null

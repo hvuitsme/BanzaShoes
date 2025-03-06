@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUi(){
-        val ll_Signout = binding.llSignout
+        val llSignout = binding.llSignout
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null){
             headerBinding.tvName.visibility = View.VISIBLE
@@ -108,13 +108,13 @@ class MainActivity : AppCompatActivity() {
                 .load(currentUser.photoUrl)
                 .placeholder(R.drawable.ic_guest)
                 .into(headerBinding.avatar)
-            ll_Signout.visibility = View.VISIBLE
+            llSignout.visibility = View.VISIBLE
             headerBinding.tvLogin.visibility = View.GONE
         }else{
             headerBinding.tvName.visibility = View.GONE
             headerBinding.tvEmail.visibility = View.GONE
             headerBinding.avatar.setImageResource(R.drawable.ic_guest)
-            ll_Signout.visibility = View.GONE
+            llSignout.visibility = View.GONE
             headerBinding.tvLogin.visibility = View.VISIBLE
         }
     }

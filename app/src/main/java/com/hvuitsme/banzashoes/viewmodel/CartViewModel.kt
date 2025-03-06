@@ -1,4 +1,4 @@
-package com.hvuitsme.banzashoes.ui.cart
+package com.hvuitsme.banzashoes.viewmodel
 
 import androidx.lifecycle.ViewModel
 
