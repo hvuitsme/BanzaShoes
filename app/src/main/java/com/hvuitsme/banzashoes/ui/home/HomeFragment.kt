@@ -13,16 +13,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.CarouselAdapter
+import com.hvuitsme.banzashoes.adapter.CategoryAdapter
 import com.hvuitsme.banzashoes.data.model.Carousel
+import com.hvuitsme.banzashoes.data.model.Category
 import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
 import com.hvuitsme.banzashoes.ui.cart.CartFragment
 import com.hvuitsme.banzashoes.ui.login.SigninFragment
@@ -36,13 +39,14 @@ class HomeFragment : Fragment() {
     private val autoScrollDelay = 4000L
     private val handler = Handler(Looper.getMainLooper())
 
-    private lateinit var viewPager: ViewPager2
+    private lateinit var carousel: ViewPager2
+    private lateinit var category: RecyclerView
     private lateinit var carouselAdapter: CarouselAdapter
-    private lateinit var databaseReference: DatabaseReference
+    private lateinit var categoryAdapter: CategoryAdapter
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
-            viewPager.setCurrentItem(viewPager.currentItem + 1, true)
+            carousel.setCurrentItem(carousel.currentItem + 1, true)
             handler.postDelayed(this, autoScrollDelay)
         }
     }
@@ -132,9 +136,10 @@ class HomeFragment : Fragment() {
             }
         }
 
-        viewPager = binding.carouselViewpager2
+        carousel = binding.carouselViewpager2
+        category = binding.rvCategory
 
-        viewPager.setPageTransformer { page, position ->
+        carousel.setPageTransformer { page, position ->
             page.alpha = 1 - kotlin.math.abs(position)
             page.translationX = -position * page.width
             val scale = 0.85f + (1 - kotlin.math.abs(position)) * 0.15f
@@ -142,29 +147,56 @@ class HomeFragment : Fragment() {
             page.scaleY = scale
         }
 
+        category.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        category.isNestedScrollingEnabled = false
+
         carouselAdapter = CarouselAdapter(emptyList())
-        viewPager.adapter = carouselAdapter
+        categoryAdapter = CategoryAdapter(emptyList())
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Banner")
+        carousel.adapter = carouselAdapter
+        category.adapter = categoryAdapter
 
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        val carouselRef = FirebaseDatabase.getInstance().getReference("Banner")
+
+        carouselRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val carouselList = mutableListOf<Carousel>()
                 for (child in snapshot.children) {
                     val carouselItem = child.getValue(Carousel::class.java)
                     if (carouselItem != null){
                         carouselList.add(carouselItem)
-
                     }
                 }
                 Log.d("HomeFragment", "carouselList: $carouselList")
-                carouselAdapter.updateData(carouselList)
+
+                carouselAdapter.updateDataCarousel(carouselList)
 
                 if (carouselList.isNotEmpty()){
                     val startPosition = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % carouselList.size
-                    viewPager.setCurrentItem(startPosition, false)
+                    carousel.setCurrentItem(startPosition, false)
                 }
                 handler.postDelayed(autoScrollRunnable, autoScrollDelay)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("HomeFragment", "Error fetching carousel data: ${error.message}")
+            }
+        })
+
+        val categoryRef = FirebaseDatabase.getInstance().getReference("Categories")
+
+        categoryRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val categoryList = mutableListOf<Category>()
+                for (child in snapshot.children) {
+                    val categoryItem = child.getValue(Category::class.java)
+                    if (categoryItem != null){
+                        categoryList.add(categoryItem)
+                    }
+                }
+                Log.d("HomeFragment", "carouselList: $categoryList")
+
+                categoryAdapter.updateDataCategory(categoryList)
             }
 
             override fun onCancelled(error: DatabaseError) {

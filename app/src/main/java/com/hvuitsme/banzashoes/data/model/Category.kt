@@ -1,4 +1,5 @@
 package com.hvuitsme.banzashoes.data.model
 
-class Category {
-}
+data class Category(
+    val url: String = ""
+)
