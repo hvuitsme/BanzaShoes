@@ -33,21 +33,9 @@ class CategoryAdapter(
         private val binding: CategoryImageContainerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private fun convertDriveLink(driveLink: String): String {
-            val regex = "/d/([a-zA-Z0-9-_]+)/".toRegex()
-            val matchResult = regex.find(driveLink)
-            val fileId = matchResult?.groups?.get(1)?.value ?: ""
-            return if (fileId.isNotEmpty()) {
-                "https://drive.google.com/uc?id=$fileId"
-            } else {
-                driveLink
-            }
-        }
-
         fun setImage(categoryItem: Category) {
-            val imageUrl = convertDriveLink(categoryItem.url)
             Glide.with(binding.root.context)
-                .load(imageUrl)
+                .load(categoryItem.url)
                 .into(binding.imageCategory)
         }
     }

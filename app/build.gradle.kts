@@ -73,4 +73,5 @@ dependencies {
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
+    runtimeOnly("com.facebook.shimmer:shimmer:0.5.0")
 }
