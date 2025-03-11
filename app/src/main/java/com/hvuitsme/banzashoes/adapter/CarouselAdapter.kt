@@ -1,6 +1,5 @@
 package com.hvuitsme.banzashoes.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +35,7 @@ class CarouselAdapter(
     class CarouselViewHolder(
         private val binding: CarouselImageContailnerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("CheckResult")
+
         fun setImage(carouselItem: Carousel) {
             Glide.with(binding.root.context)
                 .load(carouselItem.url)

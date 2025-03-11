@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -24,6 +25,7 @@ import com.google.firebase.database.ValueEventListener
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.CarouselAdapter
 import com.hvuitsme.banzashoes.adapter.CategoryAdapter
+import com.hvuitsme.banzashoes.adapter.ProductAdapter
 import com.hvuitsme.banzashoes.data.model.Carousel
 import com.hvuitsme.banzashoes.data.model.Category
 import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
@@ -41,8 +43,11 @@ class HomeFragment : Fragment() {
 
     private lateinit var carousel: ViewPager2
     private lateinit var category: RecyclerView
+    private lateinit var product: RecyclerView
+
     private lateinit var carouselAdapter: CarouselAdapter
     private lateinit var categoryAdapter: CategoryAdapter
+    private lateinit var productAdapter: ProductAdapter
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
@@ -50,6 +55,7 @@ class HomeFragment : Fragment() {
             handler.postDelayed(this, autoScrollDelay)
         }
     }
+
     companion object {
         fun newInstance() = HomeFragment()
     }
@@ -75,15 +81,10 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeSwipeRefresh.setOnRefreshListener {
-            binding.homeLoading.visibility = View.VISIBLE
-            binding.loadingBg.visibility = View.VISIBLE
 
             binding.homeSwipeRefresh.isRefreshing = false
-//            Toast.makeText(requireContext(), "Đang làm mới.....", Toast.LENGTH_SHORT).show()
 
             handler.postDelayed({
-                binding.homeLoading.visibility = View.GONE
-                binding.loadingBg.visibility = View.GONE
             }, 2000)
         }
 
@@ -105,7 +106,7 @@ class HomeFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.cart_toolbar -> {
                     val currentUser = FirebaseAuth.getInstance().currentUser
-                    if(currentUser != null){
+                    if (currentUser != null) {
                         parentFragmentManager
                             .beginTransaction()
                             .setCustomAnimations(
@@ -117,7 +118,7 @@ class HomeFragment : Fragment() {
                             .replace(binding.container.id, CartFragment.newInstance())
                             .addToBackStack(null)
                             .commit()
-                    }else{
+                    } else {
                         parentFragmentManager
                             .beginTransaction()
                             .setCustomAnimations(
@@ -132,12 +133,15 @@ class HomeFragment : Fragment() {
                     }
                     true
                 }
+
                 else -> false
             }
         }
 
         carousel = binding.carouselViewpager2
-        category = binding.rvCategory
+        carouselAdapter = CarouselAdapter(emptyList())
+
+        carousel.adapter = carouselAdapter
 
         carousel.setPageTransformer { page, position ->
             page.alpha = 1 - kotlin.math.abs(position)
@@ -147,62 +151,48 @@ class HomeFragment : Fragment() {
             page.scaleY = scale
         }
 
-        category.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        category.isNestedScrollingEnabled = false
+        viewModel.loadCarousel()
 
-        carouselAdapter = CarouselAdapter(emptyList())
-        categoryAdapter = CategoryAdapter(emptyList())
+        viewModel.carousel.observe(viewLifecycleOwner) { carouselList ->
+            carouselAdapter.updateDataCarousel(carouselList)
 
-        carousel.adapter = carouselAdapter
-        category.adapter = categoryAdapter
+            if (carouselList.isNotEmpty()) {
+                val startPosition = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % carouselList.size
+                carousel.setCurrentItem(startPosition, false)
 
-        val carouselRef = FirebaseDatabase.getInstance().getReference("Banner")
-
-        carouselRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val carouselList = mutableListOf<Carousel>()
-                for (child in snapshot.children) {
-                    val carouselItem = child.getValue(Carousel::class.java)
-                    if (carouselItem != null){
-                        carouselList.add(carouselItem)
-                    }
-                }
-                Log.d("HomeFragment", "carouselList: $carouselList")
-
-                carouselAdapter.updateDataCarousel(carouselList)
-
-                if (carouselList.isNotEmpty()){
-                    val startPosition = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % carouselList.size
-                    carousel.setCurrentItem(startPosition, false)
-                }
+                handler.removeCallbacks(autoScrollRunnable)
                 handler.postDelayed(autoScrollRunnable, autoScrollDelay)
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeFragment", "Error fetching carousel data: ${error.message}")
-            }
-        })
+        category = binding.rvCategory
+        categoryAdapter = CategoryAdapter(emptyList())
 
-        val categoryRef = FirebaseDatabase.getInstance().getReference("Categories")
+        category.adapter = categoryAdapter
 
-        categoryRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val categoryList = mutableListOf<Category>()
-                for (child in snapshot.children) {
-                    val categoryItem = child.getValue(Category::class.java)
-                    if (categoryItem != null){
-                        categoryList.add(categoryItem)
-                    }
-                }
-                Log.d("HomeFragment", "carouselList: $categoryList")
+        category.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        category.isNestedScrollingEnabled = false
 
-                categoryAdapter.updateDataCategory(categoryList)
-            }
+        viewModel.loadCategory()
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeFragment", "Error fetching carousel data: ${error.message}")
-            }
-        })
+        viewModel.category.observe(viewLifecycleOwner) { categoryList ->
+            categoryAdapter.updateDataCategory(categoryList)
+        }
+
+        product = binding.rvRecommend
+        productAdapter = ProductAdapter(emptyList())
+
+        product.adapter = productAdapter
+
+        product.layoutManager = GridLayoutManager(requireContext(), 2)
+        product.isNestedScrollingEnabled = false
+
+        viewModel.loadProduct()
+
+        viewModel.product.observe(viewLifecycleOwner) { productList ->
+            productAdapter.updateDataProduct(productList)
+        }
     }
 
     override fun onDestroyView() {

@@ -40,17 +40,17 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:orientation="vertical">
-                
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="203dp"
-                    android:layout_marginVertical="@dimen/x1"
-                    android:layout_marginHorizontal="@dimen/x2">
+                    android:layout_marginHorizontal="@dimen/x2"
+                    android:layout_marginVertical="@dimen/x1">
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/carousel_viewpager2"
@@ -66,17 +66,58 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/x1"
-                    android:layout_marginHorizontal="@dimen/x2">
+                    android:layout_marginHorizontal="@dimen/x2"
+                    android:layout_marginVertical="@dimen/x1">
+
+                    <TextView
+                        android:id="@+id/iv_brand"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/brand"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="@dimen/text_x2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_category"
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
+                        android:layout_marginTop="@dimen/x1"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iv_brand" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/x2"
+                    android:layout_marginVertical="@dimen/x1">
+
+                    <TextView
+                        android:id="@+id/iv_recommend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/recommend"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="@dimen/text_x2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_recommend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/x1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iv_recommend" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
