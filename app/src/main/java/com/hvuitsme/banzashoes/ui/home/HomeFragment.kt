@@ -49,6 +49,8 @@ class HomeFragment : Fragment() {
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var productAdapter: ProductAdapter
 
+    private var currentCateId = ""
+
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
             carousel.setCurrentItem(carousel.currentItem + 1, true)
@@ -178,6 +180,16 @@ class HomeFragment : Fragment() {
 
         viewModel.category.observe(viewLifecycleOwner) { categoryList ->
             categoryAdapter.updateDataCategory(categoryList)
+            categoryAdapter.setSelectedPosition(0)
+            if (categoryList.isNotEmpty()){
+                currentCateId = (categoryList[0].cateId)
+                filterProductByCategory(currentCateId)
+            }
+        }
+
+        categoryAdapter.setOnCategoryClick { categoryItem, position ->
+            categoryAdapter.setSelectedPosition(position)
+            filterProductByCategory(categoryItem.cateId)
         }
 
         product = binding.rvRecommend
@@ -191,12 +203,19 @@ class HomeFragment : Fragment() {
         viewModel.loadProduct()
 
         viewModel.product.observe(viewLifecycleOwner) { productList ->
+            val filterList = productList.filter { it.cateId == currentCateId }
             productAdapter.updateDataProduct(productList)
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun filterProductByCategory(cateId: String) {
+        val fullProductList = viewModel.product.value?: emptyList()
+        val filteredList = fullProductList.filter { it.cateId == cateId }
+        productAdapter.updateDataProduct(filteredList)
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        _binding = null
+//    }
 }

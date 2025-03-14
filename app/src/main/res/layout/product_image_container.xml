@@ -8,6 +8,7 @@
     app:cardCornerRadius="16dp"
     app:strokeColor="?attr/colorOnPrimary"
     app:strokeWidth="1dp"
+    android:layout_marginBottom="@dimen/x1"
     app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,12 +25,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/ivFav"
+            android:id="@+id/ivAddCart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x1"
             android:layout_marginEnd="@dimen/x1"
-            android:src="@drawable/ic_heart"
+            android:src="@drawable/ic_cart_plus"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,7 +39,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/x1"
-            android:layout_marginStart="@dimen/x1"
             android:layout_marginTop="@dimen/x1"
             android:text="@string/title"
             android:maxLines="1"
@@ -53,7 +53,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/x1"
-            android:layout_marginStart="@dimen/x1"
             android:text="@string/price"
             android:textColor="?attr/colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
