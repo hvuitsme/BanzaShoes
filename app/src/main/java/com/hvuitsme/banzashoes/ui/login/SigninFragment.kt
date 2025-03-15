@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.hvuitsme.banzashoes.MainActivity
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.databinding.FragmentSigninBinding
@@ -48,7 +50,15 @@ class SigninFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loginToolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
+            val navOptions = navOptions {
+                anim {
+                    enter = R.anim.pop_slide_in_from_left
+                    exit = R.anim.pop_slide_out_from_right
+                    popEnter = R.anim.slide_in_from_right
+                    popExit = R.anim.slide_out_to_left
+                }
+            }
+            findNavController().navigate(R.id.action_signinFragment_to_homeFragment, null, navOptions)
         }
 
         signInButton = view.findViewById(R.id.google_btn)
@@ -60,27 +70,10 @@ class SigninFragment : Fragment() {
                 } else {
                     val result = googleAuthClient.signIn()
                     if(result){
-                        (activity as? MainActivity?)!!.onLoginSuccess()
+                        findNavController().navigate(R.id.action_signinFragment_to_homeFragment)
                     }
                 }
             }
         }
-
-//        updateButtonText()
-//
-//        signInButton.setOnClickListener{
-//            lifecycleScope.launch {
-//                if (googleAuthClient.isSingedIn()){
-//                    googleAuthClient.signOut()
-//                }else{
-//                    googleAuthClient.signIn()
-//                }
-//                updateButtonText()
-//            }
-//        }
     }
-
-//    private fun updateButtonText() {
-//        signInButton.text = if (googleAuthClient.isSingedIn()) "Sign out" else "Sign in"
-//    }
 }

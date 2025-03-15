@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
+import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.databinding.FragmentCartBinding
 import com.hvuitsme.banzashoes.viewmodel.CartViewModel
 
@@ -38,7 +41,15 @@ class CartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cartToolbar.setNavigationOnClickListener{
-            parentFragmentManager.popBackStack()
+            val navOptions = navOptions {
+                anim {
+                    enter = R.anim.pop_slide_in_from_left
+                    exit = R.anim.pop_slide_out_from_right
+                    popEnter = R.anim.slide_in_from_right
+                    popExit = R.anim.slide_out_to_left
+                }
+            }
+            findNavController().navigate(R.id.action_cartFragment_to_homeFragment, null, navOptions)
         }
     }
 

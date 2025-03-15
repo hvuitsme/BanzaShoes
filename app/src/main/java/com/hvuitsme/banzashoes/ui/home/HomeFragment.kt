@@ -5,33 +5,30 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.CarouselAdapter
 import com.hvuitsme.banzashoes.adapter.CategoryAdapter
 import com.hvuitsme.banzashoes.adapter.ProductAdapter
-import com.hvuitsme.banzashoes.data.model.Carousel
-import com.hvuitsme.banzashoes.data.model.Category
 import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
-import com.hvuitsme.banzashoes.ui.cart.CartFragment
-import com.hvuitsme.banzashoes.ui.login.SigninFragment
+import com.hvuitsme.banzashoes.databinding.NavHeaderBinding
 import com.hvuitsme.banzashoes.viewmodel.HomeViewModel
+import com.hvuitsme.test2.GoogleAuthClient
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -41,6 +38,9 @@ class HomeFragment : Fragment() {
     private val autoScrollDelay = 4000L
     private val handler = Handler(Looper.getMainLooper())
 
+    private lateinit var headerBinding: NavHeaderBinding
+    private lateinit var googleAuthClinet: GoogleAuthClient
+
     private lateinit var carousel: ViewPager2
     private lateinit var category: RecyclerView
     private lateinit var product: RecyclerView
@@ -48,8 +48,6 @@ class HomeFragment : Fragment() {
     private lateinit var carouselAdapter: CarouselAdapter
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var productAdapter: ProductAdapter
-
-    private var currentCateId = ""
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
@@ -90,9 +88,46 @@ class HomeFragment : Fragment() {
             }, 2000)
         }
 
+        googleAuthClinet = GoogleAuthClient(requireContext())
+
+        val navHeader = binding.navView.getHeaderView(0)
+
+        headerBinding = NavHeaderBinding.bind(navHeader)
+
+        updateUi()
+
+        navHeader.setOnClickListener {
+
+            if (!googleAuthClinet.isSingedIn()){
+                binding.homeDrawLayout.closeDrawers()
+
+                val navOptions = navOptions {
+                    anim {
+                        enter = R.anim.slide_in_from_right
+                        exit = R.anim.slide_out_to_left
+                        popEnter = R.anim.pop_slide_in_from_left
+                        popExit = R.anim.pop_slide_out_from_right
+                    }
+                }
+                findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
+            }else{
+//                binding.homeDrawLayout.closeDrawers()
+            }
+        }
+
+        binding.llSignout.setOnClickListener {
+            handler.postDelayed({
+                lifecycleScope.launch {
+                    if (googleAuthClinet.isSingedIn()){
+                        googleAuthClinet.signOut()
+                        updateUi()
+                    }
+                }
+            },2000)
+        }
+
         binding.topAppBar.setNavigationOnClickListener {
-            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawlayout_main)
-            drawerLayout.openDrawer(GravityCompat.START)
+            binding.homeDrawLayout.openDrawer(GravityCompat.START)
         }
 
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -108,30 +143,29 @@ class HomeFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.cart_toolbar -> {
                     val currentUser = FirebaseAuth.getInstance().currentUser
-                    if (currentUser != null) {
-                        parentFragmentManager
-                            .beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.slide_in_from_right,
-                                R.anim.slide_out_to_left,
-                                R.anim.pop_slide_in_from_left,
-                                R.anim.pop_slide_out_from_right
-                            )
-                            .replace(binding.container.id, CartFragment.newInstance())
-                            .addToBackStack(null)
-                            .commit()
+                    val navOptions = if (currentUser != null) {
+                        navOptions {
+                            anim {
+                                enter = R.anim.slide_in_from_right
+                                exit = R.anim.slide_out_to_left
+                                popEnter = R.anim.pop_slide_in_from_left
+                                popExit = R.anim.pop_slide_out_from_right
+                            }
+                        }
                     } else {
-                        parentFragmentManager
-                            .beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.pop_slide_in_from_left,
-                                R.anim.pop_slide_out_from_right,
-                                R.anim.slide_in_from_right,
-                                R.anim.slide_out_to_left
-                            )
-                            .replace(binding.container.id, SigninFragment.newInstance())
-                            .addToBackStack(null)
-                            .commit()
+                        navOptions {
+                            anim {
+                                enter = R.anim.pop_slide_in_from_left
+                                exit = R.anim.pop_slide_out_from_right
+                                popEnter = R.anim.slide_in_from_right
+                                popExit = R.anim.slide_out_to_left
+                            }
+                        }
+                    }
+                    if (currentUser != null){
+                        findNavController().navigate(R.id.action_homeFragment_to_cartFragment, null, navOptions)
+                    }else{
+                        findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
                     }
                     true
                 }
@@ -182,8 +216,7 @@ class HomeFragment : Fragment() {
             categoryAdapter.updateDataCategory(categoryList)
             categoryAdapter.setSelectedPosition(0)
             if (categoryList.isNotEmpty()){
-                currentCateId = (categoryList[0].cateId)
-                filterProductByCategory(currentCateId)
+                filterProductByCategory(categoryList[0].cateId)
             }
         }
 
@@ -203,8 +236,30 @@ class HomeFragment : Fragment() {
         viewModel.loadProduct()
 
         viewModel.product.observe(viewLifecycleOwner) { productList ->
-            val filterList = productList.filter { it.cateId == currentCateId }
             productAdapter.updateDataProduct(productList)
+        }
+    }
+
+    private fun updateUi(){
+        val llSignout = binding.llSignout
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null){
+            headerBinding.tvName.visibility = View.VISIBLE
+            headerBinding.tvName.text = currentUser.displayName ?: "User"
+            headerBinding.tvEmail.visibility = View.VISIBLE
+            headerBinding.tvEmail.text = currentUser.email
+            Glide.with(this)
+                .load(currentUser.photoUrl)
+                .placeholder(R.drawable.ic_guest)
+                .into(headerBinding.avatar)
+            llSignout.visibility = View.VISIBLE
+            headerBinding.tvLogin.visibility = View.GONE
+        }else{
+            headerBinding.tvName.visibility = View.GONE
+            headerBinding.tvEmail.visibility = View.GONE
+            headerBinding.avatar.setImageResource(R.drawable.ic_guest)
+            llSignout.visibility = View.GONE
+            headerBinding.tvLogin.visibility = View.VISIBLE
         }
     }
 
