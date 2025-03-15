@@ -69,10 +69,11 @@ class HomeViewModel : ViewModel() {
         })
     }
 
-    fun loadProduct(){
+    fun loadProduct(selectedCateId: String = ""){
         val productRef = firebaseDatabase.getReference("Product")
+        val query = productRef.orderByChild("cateId").equalTo(selectedCateId)
 
-        productRef.addValueEventListener(object : ValueEventListener{
+        query.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val productList = mutableListOf<Product>()
                 for (child in snapshot.children){

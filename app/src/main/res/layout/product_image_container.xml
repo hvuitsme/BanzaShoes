@@ -9,6 +9,7 @@
     app:strokeColor="?attr/colorOnPrimary"
     app:strokeWidth="1dp"
     android:layout_marginBottom="@dimen/x1"
+    android:layout_marginHorizontal="@dimen/x0.5"
     app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout

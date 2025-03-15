@@ -1,4 +1,4 @@
-package com.hvuitsme.banzashoes.ui.login
+package com.hvuitsme.banzashoes.ui.signin
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import com.hvuitsme.banzashoes.MainActivity
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.databinding.FragmentSigninBinding
 import com.hvuitsme.banzashoes.viewmodel.SigninViewModel

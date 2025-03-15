@@ -217,12 +217,14 @@ class HomeFragment : Fragment() {
             categoryAdapter.setSelectedPosition(0)
             if (categoryList.isNotEmpty()){
                 filterProductByCategory(categoryList[0].cateId)
+                viewModel.loadProduct(categoryList[0].cateId)
             }
         }
 
         categoryAdapter.setOnCategoryClick { categoryItem, position ->
             categoryAdapter.setSelectedPosition(position)
             filterProductByCategory(categoryItem.cateId)
+            viewModel.loadProduct(categoryItem.cateId)
         }
 
         product = binding.rvRecommend
