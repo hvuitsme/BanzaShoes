@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/x1">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/x2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?attr/colorOnPrimary"
+        app:strokeWidth="0.5dp">
+
+        <LinearLayout
+            android:id="@+id/cartItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivCart"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="@dimen/x1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/x1"
+                android:layout_marginEnd="@dimen/x1"
+                android:orientation="vertical"
+                app:layout_constraintHorizontal_weight="1">
+
+                <TextView
+                    android:id="@+id/tvCart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="@dimen/text_x2" />
+
+                <TextView
+                    android:id="@+id/tvCartPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/price"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="@dimen/text_x2" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/minusBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/qty_bg_btn"
+                        android:text="@string/minus"
+                        android:textColor="?attr/colorOnPrimary" />
+
+                    <TextView
+                        android:id="@+id/nbQty"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:gravity="center" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/plusBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/qty_bg_btn"
+                        android:text="@string/plus"
+                        android:textColor="?attr/colorOnPrimary" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

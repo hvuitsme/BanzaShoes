@@ -6,11 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hvuitsme.banzashoes.R
+import com.hvuitsme.banzashoes.adapter.CartAdapter
+import com.hvuitsme.banzashoes.data.remote.CartDataSource
+import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
+import com.hvuitsme.banzashoes.data.repository.CartRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentCartBinding
-import com.hvuitsme.banzashoes.viewmodel.CartViewModel
+import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 
 class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
@@ -20,12 +26,15 @@ class CartFragment : Fragment() {
         fun newInstance() = CartFragment()
     }
 
-    private val viewModel: CartViewModel by viewModels()
+    private lateinit var viewModel: CartViewModel
+    private lateinit var cartAdapter: CartAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: Use the ViewModel
+        val repository = CartRepoImpl(CartDataSource(), FirebaseDataSource())
+        val factory = CartViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[CartViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -42,6 +51,8 @@ class CartFragment : Fragment() {
 
         binding.cartToolbar.setNavigationOnClickListener{
             val navOptions = navOptions {
+                launchSingleTop = true
+                restoreState = true
                 anim {
                     enter = R.anim.pop_slide_in_from_left
                     exit = R.anim.pop_slide_out_from_right
@@ -50,6 +61,31 @@ class CartFragment : Fragment() {
                 }
             }
             findNavController().navigate(R.id.action_cartFragment_to_homeFragment, null, navOptions)
+        }
+
+        cartAdapter = CartAdapter(emptyList())
+
+        binding.rvCart.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvCart.adapter = cartAdapter
+
+        viewModel.cartDisplayItems.observe(viewLifecycleOwner) { cartItems ->
+            cartAdapter.updateDataCart(cartItems)
+
+            var subtotal = 0.0
+            cartItems.forEach { cartItem ->
+                subtotal += cartItem.price * cartItem.quantity
+            }
+            val shiping = if (subtotal > 0) 10.0 else 0.0
+            val total = subtotal + shiping
+            binding.tvSubTt.text = "$${"%.2f".format(subtotal)}"
+            binding.tvShip.text = "$${"%.2f".format(shiping)}"
+            binding.tvTotal.text = "$${"%.2f".format(total)}"
+        }
+
+        viewModel.loadCartItems()
+
+        binding.checkBtn.setOnClickListener {
+
         }
     }
 

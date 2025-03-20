@@ -1,0 +1,55 @@
+package com.hvuitsme.banzashoes.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.hvuitsme.banzashoes.data.model.Cart
+import com.hvuitsme.banzashoes.data.model.CartDisplayItem
+import com.hvuitsme.banzashoes.databinding.CartContainerBinding
+
+class CartAdapter(
+    private var cartItems: List<CartDisplayItem>
+) : RecyclerView.Adapter<CartAdapter.CartViewHoler>() {
+
+    fun updateDataCart(cartItems: List<CartDisplayItem>) {
+        this.cartItems = cartItems
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): CartViewHoler {
+        val binding = CartContainerBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return CartViewHoler(binding)
+    }
+
+    override fun onBindViewHolder(holder: CartViewHoler, position: Int) {
+        holder.bind(cartItems[position])
+    }
+
+    override fun getItemCount(): Int = cartItems.size
+
+    class CartViewHoler(
+        private val binding: CartContainerBinding
+    ): RecyclerView.ViewHolder(binding.root) {
+        fun bind(cartItem: CartDisplayItem) {
+            binding.tvCart.text = cartItem.title
+            binding.tvCartPrice.text = "$${cartItem.price}"
+            binding.nbQty.text = cartItem.quantity.toString()
+            Glide
+                .with(binding.root.context)
+                .load(cartItem.imageUrls)
+                .into(binding.ivCart)
+
+            binding.minusBtn.setOnClickListener {
+            }
+
+            binding.plusBtn.setOnClickListener {
+            }
+        }
+    }
+}

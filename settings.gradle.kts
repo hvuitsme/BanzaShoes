@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BanzaShoes"
 include(":app")
- 
+include(":admin")

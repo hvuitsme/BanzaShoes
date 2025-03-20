@@ -78,4 +78,8 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
     runtimeOnly("com.facebook.shimmer:shimmer:0.5.0")
+
+    // Retrofit & Gson
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 }
