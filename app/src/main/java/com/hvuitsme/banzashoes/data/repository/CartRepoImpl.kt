@@ -4,11 +4,13 @@ import com.hvuitsme.banzashoes.data.model.Cart
 import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.data.remote.CartDataSource
 import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class CartRepoImpl(
     private val cartDataSource: CartDataSource,
     private val firebaseDataSource: FirebaseDataSource
-): CartRepo {
+) : CartRepo {
     override suspend fun addOrUpdateCartItem(productId: String, qtyToAdd: Int): Boolean {
         return cartDataSource.addOrUpdateCartItem(productId, qtyToAdd)
     }
@@ -16,18 +18,25 @@ class CartRepoImpl(
     override suspend fun getCartDisplayItems(): List<CartDisplayItem> {
         val cartItem: List<Cart> = cartDataSource.getCartItems()
         val displayList = mutableListOf<CartDisplayItem>()
-        for (item in cartItem){
-            val product = firebaseDataSource.getProductsById(item.productId)
-            if (product != null){
-                displayList.add(
-                    CartDisplayItem(
-                        productId = product.id,
-                        title = product.title,
-                        imageUrls = product.imageUrls.firstOrNull() ?: "",
-                        price = product.price,
-                        quantity = item.qty
-                    )
-                )
+        coroutineScope {
+            val deferreds = cartItem.map { item ->
+                async {
+                    val product = firebaseDataSource.getProductsById(item.productId)
+                    product?.let {
+                        CartDisplayItem(
+                            productId = product.id,
+                            title = product.title,
+                            imageUrls = product.imageUrls.firstOrNull() ?: "",
+                            price = product.price,
+                            quantity = item.qty
+                        )
+                    }
+                }
+            }
+            deferreds.forEach { deferred ->
+                deferred.await()?.let { displayItem ->
+                    displayList.add(displayItem)
+                }
             }
         }
         return displayList
