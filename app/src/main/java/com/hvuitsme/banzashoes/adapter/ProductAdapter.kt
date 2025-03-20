@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.data.model.Product
-import com.hvuitsme.banzashoes.databinding.ProductImageContainerBinding
+import com.hvuitsme.banzashoes.databinding.ProductContainerBinding
 
 class ProductAdapter(
-    private var productItem: List<Product> = emptyList()
+    private var productItem: List<Product> = emptyList(),
+    private val onAddCartClick: (Product) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     fun updateDataProduct(productItem: List<Product>) {
@@ -20,10 +22,10 @@ class ProductAdapter(
         parent: ViewGroup,
         viewType: Int
     ): ProductViewHolder {
-        val binding = ProductImageContainerBinding.inflate(
+        val binding = ProductContainerBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ProductViewHolder(binding)
+        return ProductViewHolder(binding, onAddCartClick)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
@@ -33,7 +35,8 @@ class ProductAdapter(
     override fun getItemCount(): Int = productItem.size
 
     class ProductViewHolder(
-        private val binding: ProductImageContainerBinding
+        private val binding: ProductContainerBinding,
+        private val onAddCartClick: (Product) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(productItem: Product) {
@@ -43,6 +46,12 @@ class ProductAdapter(
                 .into(binding.ivProduct)
             binding.tvTitle.text = productItem.title
             binding.tvPrice.text = "$${productItem.price}"
+
+            binding.ivAddCart.setImageResource(R.drawable.ic_cart_plus)
+            binding.ivAddCart.setOnClickListener {
+                onAddCartClick(productItem)
+                binding.ivAddCart.setImageResource(R.drawable.ic_cart_check)
+            }
         }
     }
 }

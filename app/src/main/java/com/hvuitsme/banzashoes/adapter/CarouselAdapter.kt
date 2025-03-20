@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hvuitsme.banzashoes.data.model.Carousel
-import com.hvuitsme.banzashoes.databinding.CarouselImageContailnerBinding
+import com.hvuitsme.banzashoes.databinding.CarouselContailnerBinding
 
 class CarouselAdapter(
     private var carouselItems: List<Carousel>
@@ -17,7 +17,7 @@ class CarouselAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
-        val binding = CarouselImageContailnerBinding.inflate(
+        val binding = CarouselContailnerBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return CarouselViewHolder(binding)
@@ -33,7 +33,7 @@ class CarouselAdapter(
     override fun getItemCount(): Int = if (carouselItems.isEmpty()) 0 else Int.MAX_VALUE
 
     class CarouselViewHolder(
-        private val binding: CarouselImageContailnerBinding
+        private val binding: CarouselContailnerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun setImage(carouselItem: Carousel) {

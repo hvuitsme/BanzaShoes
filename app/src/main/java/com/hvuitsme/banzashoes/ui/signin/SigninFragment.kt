@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.databinding.FragmentSigninBinding
-import com.hvuitsme.banzashoes.viewmodel.SigninViewModel
+import com.hvuitsme.banzashoes.ui.signin.SigninViewModel
 import com.hvuitsme.test2.GoogleAuthClient
 import kotlinx.coroutines.launch
 
@@ -57,7 +57,11 @@ class SigninFragment : Fragment() {
                     popExit = R.anim.slide_out_to_left
                 }
             }
-            findNavController().navigate(R.id.action_signinFragment_to_homeFragment, null, navOptions)
+            findNavController().navigate(
+                R.id.action_signinFragment_to_homeFragment,
+                null,
+                navOptions
+            )
         }
 
         signInButton = view.findViewById(R.id.google_btn)
@@ -68,7 +72,7 @@ class SigninFragment : Fragment() {
                     googleAuthClient.signOut()
                 } else {
                     val result = googleAuthClient.signIn()
-                    if(result){
+                    if (result) {
                         findNavController().navigate(R.id.action_signinFragment_to_homeFragment)
                     }
                 }

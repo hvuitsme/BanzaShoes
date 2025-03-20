@@ -47,17 +47,17 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_marginBottom="@dimen/x2"
             android:background="@drawable/bg_edittext"
             android:hint="@string/password"
-            android:paddingHorizontal="@dimen/x1"
-            android:layout_marginBottom="@dimen/x2" />
+            android:paddingHorizontal="@dimen/x1" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/or_with"
             android:textAlignment="center"
-            android:textSize="@dimen/text_x2"/>
+            android:textSize="@dimen/text_x2" />
 
         <LinearLayout
             android:layout_width="match_parent"

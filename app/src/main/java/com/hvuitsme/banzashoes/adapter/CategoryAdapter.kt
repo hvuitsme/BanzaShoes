@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hvuitsme.banzashoes.data.model.Category
-import com.hvuitsme.banzashoes.databinding.CategoryImageContainerBinding
+import com.hvuitsme.banzashoes.databinding.CategoryContainerBinding
 
 class CategoryAdapter(
     private var categoryItem: List<Category>
@@ -31,20 +31,20 @@ class CategoryAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val binding = CategoryImageContainerBinding.inflate(
+        val binding = CategoryContainerBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return CategoryViewHolder(binding)
     }
 
-    override fun onBindViewHolder( holder: CategoryViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.bind(categoryItem[position], position)
     }
 
     override fun getItemCount(): Int = categoryItem.size
 
     inner class CategoryViewHolder(
-        private val binding: CategoryImageContainerBinding
+        private val binding: CategoryContainerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(categoryItem: Category, position: Int) {
@@ -54,7 +54,7 @@ class CategoryAdapter(
 
             if (position == selectedPosition) {
                 binding.imageCategory.alpha = 1f
-            }else{
+            } else {
                 binding.imageCategory.alpha = 0.5f
             }
 
