@@ -1,7 +1,6 @@
 package com.hvuitsme.banzashoes.ui.home
 
 import android.content.res.Configuration
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -24,9 +24,15 @@ import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.CarouselAdapter
 import com.hvuitsme.banzashoes.adapter.CategoryAdapter
 import com.hvuitsme.banzashoes.adapter.ProductAdapter
+import com.hvuitsme.banzashoes.data.model.Product
+import com.hvuitsme.banzashoes.data.remote.CartDataSource
+import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
+import com.hvuitsme.banzashoes.data.repository.BanzaRepoImpl
+import com.hvuitsme.banzashoes.data.repository.CartRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
 import com.hvuitsme.banzashoes.databinding.NavHeaderBinding
-import com.hvuitsme.banzashoes.viewmodel.HomeViewModel
+import com.hvuitsme.banzashoes.ui.cart.CartViewModel
+import com.hvuitsme.banzashoes.ui.cart.CartViewModelFactory
 import com.hvuitsme.test2.GoogleAuthClient
 import kotlinx.coroutines.launch
 
@@ -60,12 +66,20 @@ class HomeFragment : Fragment() {
         fun newInstance() = HomeFragment()
     }
 
-    private val viewModel: HomeViewModel by viewModels()
+    private lateinit var viewModel: HomeViewModel
+    private lateinit var cartViewModel: CartViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: Use the ViewModel
+//        val databaseSource = FirebaseDataSource()
+        val repository = BanzaRepoImpl(FirebaseDataSource())
+        val factory = HomeViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
+
+        val cartRepository = CartRepoImpl(CartDataSource(), FirebaseDataSource())
+        val cartFactory = CartViewModelFactory(cartRepository)
+        cartViewModel = ViewModelProvider(this, cartFactory)[CartViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -98,10 +112,12 @@ class HomeFragment : Fragment() {
 
         navHeader.setOnClickListener {
 
-            if (!googleAuthClinet.isSingedIn()){
+            if (!googleAuthClinet.isSingedIn()) {
                 binding.homeDrawLayout.closeDrawers()
 
                 val navOptions = navOptions {
+                    launchSingleTop = true
+                    restoreState = true
                     anim {
                         enter = R.anim.slide_in_from_right
                         exit = R.anim.slide_out_to_left
@@ -109,8 +125,12 @@ class HomeFragment : Fragment() {
                         popExit = R.anim.pop_slide_out_from_right
                     }
                 }
-                findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
-            }else{
+                findNavController().navigate(
+                    R.id.action_homeFragment_to_signinFragment,
+                    null,
+                    navOptions
+                )
+            } else {
 //                binding.homeDrawLayout.closeDrawers()
             }
         }
@@ -118,12 +138,12 @@ class HomeFragment : Fragment() {
         binding.llSignout.setOnClickListener {
             handler.postDelayed({
                 lifecycleScope.launch {
-                    if (googleAuthClinet.isSingedIn()){
+                    if (googleAuthClinet.isSingedIn()) {
                         googleAuthClinet.signOut()
                         updateUi()
                     }
                 }
-            },2000)
+            }, 2000)
         }
 
         binding.topAppBar.setNavigationOnClickListener {
@@ -143,29 +163,28 @@ class HomeFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.cart_toolbar -> {
                     val currentUser = FirebaseAuth.getInstance().currentUser
-                    val navOptions = if (currentUser != null) {
-                        navOptions {
-                            anim {
-                                enter = R.anim.slide_in_from_right
-                                exit = R.anim.slide_out_to_left
-                                popEnter = R.anim.pop_slide_in_from_left
-                                popExit = R.anim.pop_slide_out_from_right
-                            }
-                        }
-                    } else {
-                        navOptions {
-                            anim {
-                                enter = R.anim.pop_slide_in_from_left
-                                exit = R.anim.pop_slide_out_from_right
-                                popEnter = R.anim.slide_in_from_right
-                                popExit = R.anim.slide_out_to_left
-                            }
+                    val navOptions = navOptions {
+                        launchSingleTop = true
+                        restoreState = true
+                        anim {
+                            enter = R.anim.slide_in_from_right
+                            exit = R.anim.slide_out_to_left
+                            popEnter = R.anim.pop_slide_in_from_left
+                            popExit = R.anim.pop_slide_out_from_right
                         }
                     }
-                    if (currentUser != null){
-                        findNavController().navigate(R.id.action_homeFragment_to_cartFragment, null, navOptions)
-                    }else{
-                        findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
+                    if (currentUser != null || googleAuthClinet.isSingedIn()) {
+                        findNavController().navigate(
+                            R.id.action_homeFragment_to_cartFragment,
+                            null,
+                            navOptions
+                        )
+                    } else {
+                        findNavController().navigate(
+                            R.id.action_homeFragment_to_signinFragment,
+                            null,
+                            navOptions
+                        )
                     }
                     true
                 }
@@ -176,7 +195,6 @@ class HomeFragment : Fragment() {
 
         carousel = binding.carouselViewpager2
         carouselAdapter = CarouselAdapter(emptyList())
-
         carousel.adapter = carouselAdapter
 
         carousel.setPageTransformer { page, position ->
@@ -190,12 +208,11 @@ class HomeFragment : Fragment() {
         viewModel.loadCarousel()
 
         viewModel.carousel.observe(viewLifecycleOwner) { carouselList ->
-            carouselAdapter.updateDataCarousel(carouselList)
-
             if (carouselList.isNotEmpty()) {
+                carouselAdapter.updateDataCarousel(carouselList)
+
                 val startPosition = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % carouselList.size
                 carousel.setCurrentItem(startPosition, false)
-
                 handler.removeCallbacks(autoScrollRunnable)
                 handler.postDelayed(autoScrollRunnable, autoScrollDelay)
             }
@@ -203,7 +220,6 @@ class HomeFragment : Fragment() {
 
         category = binding.rvCategory
         categoryAdapter = CategoryAdapter(emptyList())
-
         category.adapter = categoryAdapter
 
         category.layoutManager =
@@ -215,9 +231,11 @@ class HomeFragment : Fragment() {
         viewModel.category.observe(viewLifecycleOwner) { categoryList ->
             categoryAdapter.updateDataCategory(categoryList)
             categoryAdapter.setSelectedPosition(0)
-            if (categoryList.isNotEmpty()){
+            if (categoryList.isNotEmpty()) {
                 filterProductByCategory(categoryList[0].cateId)
-                viewModel.loadProduct(categoryList[0].cateId)
+                if (viewModel.product.value.isNullOrEmpty()){
+                    viewModel.loadProduct(categoryList[0].cateId)
+                }
             }
         }
 
@@ -228,12 +246,14 @@ class HomeFragment : Fragment() {
         }
 
         product = binding.rvRecommend
-        productAdapter = ProductAdapter(emptyList())
-
+        productAdapter = ProductAdapter(emptyList()){product ->
+            cartViewModel.addOrUpdateCartItem(product.id)
+        }
         product.adapter = productAdapter
 
         product.layoutManager = GridLayoutManager(requireContext(), 2)
         product.isNestedScrollingEnabled = false
+        product.isSaveEnabled = true
 
         viewModel.loadProduct()
 
@@ -242,10 +262,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun updateUi(){
+    private fun updateUi() {
         val llSignout = binding.llSignout
         val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null){
+        if (currentUser != null) {
             headerBinding.tvName.visibility = View.VISIBLE
             headerBinding.tvName.text = currentUser.displayName ?: "User"
             headerBinding.tvEmail.visibility = View.VISIBLE
@@ -256,7 +276,7 @@ class HomeFragment : Fragment() {
                 .into(headerBinding.avatar)
             llSignout.visibility = View.VISIBLE
             headerBinding.tvLogin.visibility = View.GONE
-        }else{
+        } else {
             headerBinding.tvName.visibility = View.GONE
             headerBinding.tvEmail.visibility = View.GONE
             headerBinding.avatar.setImageResource(R.drawable.ic_guest)
@@ -266,13 +286,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun filterProductByCategory(cateId: String) {
-        val fullProductList = viewModel.product.value?: emptyList()
+        val fullProductList = viewModel.product.value ?: emptyList()
         val filteredList = fullProductList.filter { it.cateId == cateId }
         productAdapter.updateDataProduct(filteredList)
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
