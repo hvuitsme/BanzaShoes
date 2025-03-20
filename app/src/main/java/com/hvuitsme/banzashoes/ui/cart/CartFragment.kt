@@ -63,7 +63,9 @@ class CartFragment : Fragment() {
             findNavController().navigate(R.id.action_cartFragment_to_homeFragment, null, navOptions)
         }
 
-        cartAdapter = CartAdapter(emptyList())
+        cartAdapter = CartAdapter(emptyList()){ productId, newQty ->
+            viewModel.updateCartItemQty(productId, newQty)
+        }
 
         binding.rvCart.layoutManager = LinearLayoutManager(requireContext())
         binding.rvCart.adapter = cartAdapter

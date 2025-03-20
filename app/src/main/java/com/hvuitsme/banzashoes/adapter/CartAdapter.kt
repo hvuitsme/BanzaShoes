@@ -9,7 +9,8 @@ import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.databinding.CartContainerBinding
 
 class CartAdapter(
-    private var cartItems: List<CartDisplayItem>
+    private var cartItems: List<CartDisplayItem>,
+    private val onQtyChange: (productId: String, newQty: Int) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.CartViewHoler>() {
 
     fun updateDataCart(cartItems: List<CartDisplayItem>) {
@@ -24,7 +25,7 @@ class CartAdapter(
         val binding = CartContainerBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return CartViewHoler(binding)
+        return CartViewHoler(binding, onQtyChange)
     }
 
     override fun onBindViewHolder(holder: CartViewHoler, position: Int) {
@@ -34,7 +35,8 @@ class CartAdapter(
     override fun getItemCount(): Int = cartItems.size
 
     class CartViewHoler(
-        private val binding: CartContainerBinding
+        private val binding: CartContainerBinding,
+        private val onQtyChange: (productId: String, newQty: Int) -> Unit
     ): RecyclerView.ViewHolder(binding.root) {
         fun bind(cartItem: CartDisplayItem) {
             binding.tvCart.text = cartItem.title
@@ -46,9 +48,17 @@ class CartAdapter(
                 .into(binding.ivCart)
 
             binding.minusBtn.setOnClickListener {
+                if (cartItem.quantity > 0){
+                    val newQty = cartItem.quantity - 1
+                    binding.nbQty.text = newQty.toString()
+                    onQtyChange(cartItem.productId, newQty)
+                }
             }
 
             binding.plusBtn.setOnClickListener {
+                val newQty = cartItem.quantity + 1
+                binding.nbQty.text = newQty.toString()
+                onQtyChange(cartItem.productId, newQty)
             }
         }
     }

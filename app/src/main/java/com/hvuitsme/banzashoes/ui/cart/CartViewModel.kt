@@ -27,18 +27,20 @@ class CartViewModel(
     }
 
     fun updateCartItemQty(productId: String, newQty: Int) {
-        val currentList = cartDisplayItems.value?.toMutableList() ?: mutableListOf()
-        val index = currentList.indexOfFirst { it.productId == productId }
-        if (index != -1) {
-            val oldItem = currentList[index]
-            val updatedItem = oldItem.copy(quantity = newQty)
-            currentList[index] = updatedItem
-            cartDisplayItems.value = currentList
+        val currentItems = cartDisplayItems.value?.toMutableList()?: return
+        val index = currentItems.indexOfFirst { it.productId == productId }
+        if (index != -1){
+            if (newQty == 0){
+                currentItems.removeAt(index)
+            }else{
+                currentItems[index] = currentItems[index].copy(quantity = newQty)
+            }
+            cartDisplayItems.value = currentItems
         }
 
         viewModelScope.launch {
             val success = repository.updateCartItemQty(productId, newQty)
-            if (!success) {
+            if (!success){
                 loadCartItems()
             }
         }
