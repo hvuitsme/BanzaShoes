@@ -16,6 +16,7 @@ class CartDataSource {
         try {
             val uid = auth.currentUser?.uid ?: return@withContext false
             val ref = database.getReference("Cart").child(uid)
+            val cartRef = ref.child(productId)
             val snapshot = ref.orderByChild("productId").equalTo(productId).get().await()
             if (snapshot.exists()) {
                 val cartKey = snapshot.children.firstOrNull()?.key
@@ -25,9 +26,9 @@ class CartDataSource {
                         ?.getValue(Int::class.java) ?: 0
                     val newQty = currentQty + qtyToAdd
                     if (newQty <= 0) {
-                        ref.child(cartKey).removeValue().await()
+                        cartRef.removeValue().await()
                     } else {
-                        ref.child(cartKey).child("qty").setValue(newQty).await()
+                        cartRef.child("qty").setValue(newQty).await()
                     }
                 }
             } else {
@@ -35,7 +36,7 @@ class CartDataSource {
                     "productId" to productId,
                     "qty" to qtyToAdd
                 )
-                ref.push().setValue(newItem).await()
+                cartRef.setValue(newItem).await()
             }
             true
         } catch (e: Exception) {
