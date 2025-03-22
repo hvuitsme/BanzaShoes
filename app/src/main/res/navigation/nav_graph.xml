@@ -21,18 +21,10 @@
         android:id="@+id/cartFragment"
         android:name="com.hvuitsme.banzashoes.ui.cart.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart">
-        <action
-            android:id="@+id/action_cartFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_cart"/>
     <fragment
         android:id="@+id/signinFragment"
         android:name="com.hvuitsme.banzashoes.ui.signin.SigninFragment"
         android:label="fragment_signin"
-        tools:layout="@layout/fragment_signin">
-        <action
-            android:id="@+id/action_signinFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_signin"/>
 </navigation>
