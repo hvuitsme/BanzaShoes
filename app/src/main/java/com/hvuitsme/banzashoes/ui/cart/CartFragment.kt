@@ -1,6 +1,5 @@
 package com.hvuitsme.banzashoes.ui.cart
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import com.hvuitsme.banzashoes.data.remote.CartDataSource
 import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
 import com.hvuitsme.banzashoes.data.repository.CartRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentCartBinding
-import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 
 class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
@@ -49,7 +47,7 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.cartToolbar.setNavigationOnClickListener{
+        binding.cartToolbar.setNavigationOnClickListener {
             val navOptions = navOptions {
                 launchSingleTop = true
                 restoreState = true
@@ -60,10 +58,10 @@ class CartFragment : Fragment() {
                     popExit = R.anim.slide_out_to_left
                 }
             }
-            findNavController().navigate(R.id.action_cartFragment_to_homeFragment, null, navOptions)
+            findNavController().navigateUp()
         }
 
-        cartAdapter = CartAdapter(emptyList()){ productId, newQty ->
+        cartAdapter = CartAdapter(emptyList()) { productId, newQty ->
             viewModel.updateCartItemQty(productId, newQty)
         }
 
@@ -71,17 +69,33 @@ class CartFragment : Fragment() {
         binding.rvCart.adapter = cartAdapter
 
         viewModel.cartDisplayItems.observe(viewLifecycleOwner) { cartItems ->
-            cartAdapter.updateDataCart(cartItems)
+            if (cartItems.isEmpty()) {
+                binding.rvCart.visibility = View.GONE
+                binding.cvBill.visibility = View.GONE
+                binding.checkBtn.visibility = View.GONE
+                binding.tvEmpty.visibility = View.VISIBLE
 
-            var subtotal = 0.0
-            cartItems.forEach { cartItem ->
-                subtotal += cartItem.price * cartItem.quantity
+                binding.tvSubTt.text = "$0,00"
+                binding.tvShip.text = "$0,00"
+                binding.tvTotal.text = "$0,00"
+            } else {
+                binding.rvCart.visibility = View.VISIBLE
+                binding.cvBill.visibility = View.VISIBLE
+                binding.checkBtn.visibility = View.VISIBLE
+                binding.tvEmpty.visibility = View.GONE
+
+                cartAdapter.updateDataCart(cartItems)
+
+                var subtotal = 0.0
+                cartItems.forEach { cartItem ->
+                    subtotal += cartItem.price * cartItem.quantity
+                }
+                val shiping = if (subtotal > 0) 10.0 else 0.0
+                val total = subtotal + shiping
+                binding.tvSubTt.text = "$${"%.2f".format(subtotal)}"
+                binding.tvShip.text = "$${"%.2f".format(shiping)}"
+                binding.tvTotal.text = "$${"%.2f".format(total)}"
             }
-            val shiping = if (subtotal > 0) 10.0 else 0.0
-            val total = subtotal + shiping
-            binding.tvSubTt.text = "$${"%.2f".format(subtotal)}"
-            binding.tvShip.text = "$${"%.2f".format(shiping)}"
-            binding.tvTotal.text = "$${"%.2f".format(total)}"
         }
 
         viewModel.loadCartItems()

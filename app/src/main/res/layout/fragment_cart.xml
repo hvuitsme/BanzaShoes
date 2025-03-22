@@ -24,11 +24,24 @@
             android:textSize="@dimen/text_x2" />
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <TextView
+        android:id="@+id/tv_Empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty_cart"
+        android:textSize="@dimen/x2"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/cvBill"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cart_toolbar" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/x1"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/cvBill"
         app:layout_constraintTop_toBottomOf="@id/cart_toolbar" />
 
@@ -38,6 +51,7 @@
         android:layout_height="145dp"
         android:layout_marginHorizontal="@dimen/x1"
         android:layout_marginTop="8dp"
+        android:visibility="visible"
         app:cardCornerRadius="@dimen/x2"
         app:layout_constraintBottom_toTopOf="@id/checkBtn"
         app:strokeColor="?attr/colorOnPrimary"
@@ -138,6 +152,7 @@
         android:layout_width="200dp"
         android:layout_height="70dp"
         android:text="@string/checkout"
+        android:visibility="visible"
         app:cornerRadius="@dimen/x2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/cvBill"
