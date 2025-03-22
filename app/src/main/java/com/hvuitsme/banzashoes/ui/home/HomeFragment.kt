@@ -263,7 +263,7 @@ class HomeFragment : Fragment() {
         product.isNestedScrollingEnabled = false
         product.isSaveEnabled = true
 
-        viewModel.loadProduct()
+//        viewModel.loadProduct()
 
         viewModel.product.observe(viewLifecycleOwner) { productList ->
             productAdapter.updateDataProduct(productList)
