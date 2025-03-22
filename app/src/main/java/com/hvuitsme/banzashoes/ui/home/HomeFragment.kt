@@ -112,8 +112,6 @@ class HomeFragment : Fragment() {
         navHeader.setOnClickListener {
 
             if (!googleAuthClinet.isSingedIn()) {
-                binding.homeDrawLayout.closeDrawers()
-
                 val navOptions = navOptions {
                     anim {
                         enter = R.anim.slide_in_from_right
@@ -138,6 +136,9 @@ class HomeFragment : Fragment() {
             ?.observe(viewLifecycleOwner) { signedIn ->
                 if (signedIn) {
                     updateUi()
+                    binding.homeDrawLayout.post{
+                        binding.homeDrawLayout.closeDrawers()
+                    }
                     findNavController().currentBackStackEntry
                         ?.savedStateHandle
                         ?.remove<Boolean>("SIGN_IN_RESULT")
