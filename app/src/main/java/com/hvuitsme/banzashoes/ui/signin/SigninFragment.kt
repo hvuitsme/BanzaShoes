@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -49,19 +51,20 @@ class SigninFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loginToolbar.setNavigationOnClickListener {
-            val navOptions = navOptions {
-                anim {
-                    enter = R.anim.pop_slide_in_from_left
-                    exit = R.anim.pop_slide_out_from_right
-                    popEnter = R.anim.slide_in_from_right
-                    popExit = R.anim.slide_out_to_left
-                }
-            }
-            findNavController().navigate(
-                R.id.action_signinFragment_to_homeFragment,
-                null,
-                navOptions
-            )
+//            val navOptions = navOptions {
+//                anim {
+//                    enter = R.anim.pop_slide_in_from_left
+//                    exit = R.anim.pop_slide_out_from_right
+//                    popEnter = R.anim.slide_in_from_right
+//                    popExit = R.anim.slide_out_to_left
+//                }
+//            }
+//            findNavController().navigate(
+//                R.id.action_signinFragment_to_homeFragment,
+//                null,
+//                navOptions
+//            )
+            findNavController().popBackStack()
         }
 
         signInButton = view.findViewById(R.id.google_btn)
@@ -73,7 +76,13 @@ class SigninFragment : Fragment() {
                 } else {
                     val result = googleAuthClient.signIn()
                     if (result) {
-                        findNavController().navigate(R.id.action_signinFragment_to_homeFragment)
+                        findNavController().previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("SIGN_IN_RESULT", true)
+                        val popped = findNavController().popBackStack(R.id.homeFragment, false)
+                        if (!popped) {
+                            findNavController().navigate(R.id.homeFragment)
+                        }
                     }
                 }
             }

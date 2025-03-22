@@ -24,7 +24,6 @@ import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.CarouselAdapter
 import com.hvuitsme.banzashoes.adapter.CategoryAdapter
 import com.hvuitsme.banzashoes.adapter.ProductAdapter
-import com.hvuitsme.banzashoes.data.model.Product
 import com.hvuitsme.banzashoes.data.remote.CartDataSource
 import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
 import com.hvuitsme.banzashoes.data.repository.BanzaRepoImpl
@@ -116,8 +115,6 @@ class HomeFragment : Fragment() {
                 binding.homeDrawLayout.closeDrawers()
 
                 val navOptions = navOptions {
-                    launchSingleTop = true
-                    restoreState = true
                     anim {
                         enter = R.anim.slide_in_from_right
                         exit = R.anim.slide_out_to_left
@@ -131,9 +128,21 @@ class HomeFragment : Fragment() {
                     navOptions
                 )
             } else {
-//                binding.homeDrawLayout.closeDrawers()
+                binding.homeDrawLayout.closeDrawers()
             }
         }
+
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>("SIGN_IN_RESULT")
+            ?.observe(viewLifecycleOwner) { signedIn ->
+                if (signedIn) {
+                    updateUi()
+                    findNavController().currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.remove<Boolean>("SIGN_IN_RESULT")
+                }
+            }
 
         binding.llSignout.setOnClickListener {
             handler.postDelayed({
@@ -164,8 +173,6 @@ class HomeFragment : Fragment() {
                 R.id.cart_toolbar -> {
                     val currentUser = FirebaseAuth.getInstance().currentUser
                     val navOptions = navOptions {
-                        launchSingleTop = true
-                        restoreState = true
                         anim {
                             enter = R.anim.slide_in_from_right
                             exit = R.anim.slide_out_to_left
@@ -233,7 +240,7 @@ class HomeFragment : Fragment() {
             categoryAdapter.setSelectedPosition(0)
             if (categoryList.isNotEmpty()) {
                 filterProductByCategory(categoryList[0].cateId)
-                if (viewModel.product.value.isNullOrEmpty()){
+                if (viewModel.product.value.isNullOrEmpty()) {
                     viewModel.loadProduct(categoryList[0].cateId)
                 }
             }
@@ -246,7 +253,7 @@ class HomeFragment : Fragment() {
         }
 
         product = binding.rvRecommend
-        productAdapter = ProductAdapter(emptyList()){product ->
+        productAdapter = ProductAdapter(emptyList()) { product ->
             cartViewModel.addOrUpdateCartItem(product.id)
         }
         product.adapter = productAdapter
