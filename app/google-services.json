@@ -15,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "141072870748-6blt2uc185kne4rqo13acde8hg7jqbr9.apps.googleusercontent.com",
+          "client_id": "141072870748-dl0bo3b0gp4g2okhrf7sbqqkmbesf6rj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hvuitsme.banzashoes",
+            "certificate_hash": "c7b740d1d0b47718968209a00d9284b2b925031e"
+          }
+        },
+        {
+          "client_id": "141072870748-tplk4uo4kbrlk2q9cfc2ok9ssfi92cf0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

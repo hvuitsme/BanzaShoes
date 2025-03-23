@@ -83,7 +83,7 @@ class GoogleAuthClient(
             .addCredentialOption(
                 GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId("141072870748-6blt2uc185kne4rqo13acde8hg7jqbr9.apps.googleusercontent.com")
+                    .setServerClientId("141072870748-tplk4uo4kbrlk2q9cfc2ok9ssfi92cf0.apps.googleusercontent.com")
                     .setAutoSelectEnabled(false)
                     .build()
             )
