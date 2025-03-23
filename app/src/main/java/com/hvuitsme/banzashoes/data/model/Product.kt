@@ -9,5 +9,6 @@ data class Product(
     val price: Double = 0.0,
     val rating: Double = 0.0,
     val imageUrls: List<String> = emptyList(),
-    val sizes: List<Size> = emptyList()
+    val sizes: List<Size> = emptyList(),
+    val reviews: List<Review> = emptyList()
 )

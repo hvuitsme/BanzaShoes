@@ -11,8 +11,12 @@ class CartRepoImpl(
     private val cartDataSource: CartDataSource,
     private val firebaseDataSource: FirebaseDataSource
 ) : CartRepo {
-    override suspend fun addOrUpdateCartItem(productId: String, qtyToAdd: Int): Boolean {
-        return cartDataSource.addOrUpdateCartItem(productId, qtyToAdd)
+    override suspend fun addOrUpdateCartItem(
+        productId: String,
+        qtyToAdd: Int,
+        size: String
+    ): Boolean {
+        return cartDataSource.addOrUpdateCartItem(productId, qtyToAdd, size)
     }
 
     override suspend fun getCartDisplayItems(): List<CartDisplayItem> {
@@ -28,7 +32,8 @@ class CartRepoImpl(
                             title = product.title,
                             imageUrls = product.imageUrls.firstOrNull() ?: "",
                             price = product.price,
-                            quantity = item.qty
+                            quantity = item.qty,
+                            size = item.size
                         )
                     }
                 }

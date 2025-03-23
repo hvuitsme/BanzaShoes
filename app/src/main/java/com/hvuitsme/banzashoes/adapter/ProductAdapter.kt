@@ -10,12 +10,23 @@ import com.hvuitsme.banzashoes.databinding.ProductContainerBinding
 
 class ProductAdapter(
     private var productItem: List<Product> = emptyList(),
-    private val onAddCartClick: (Product) -> Unit
+    private val onAddCartClick: (Product) -> Unit,
+    private val onProductClick: (Product) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+
+    private val addedProductIds = mutableSetOf<String>()
 
     fun updateDataProduct(productItem: List<Product>) {
         this.productItem = productItem
         notifyDataSetChanged()
+    }
+
+    fun markProductAsAdded(productId: String) {
+        addedProductIds.add(productId)
+        val index = productItem.indexOfFirst { it.id == productId }
+        if (index != -1) {
+            notifyItemChanged(index)
+        }
     }
 
     override fun onCreateViewHolder(
@@ -25,7 +36,7 @@ class ProductAdapter(
         val binding = ProductContainerBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ProductViewHolder(binding, onAddCartClick)
+        return ProductViewHolder(binding, onAddCartClick, onProductClick, addedProductIds)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
@@ -36,21 +47,25 @@ class ProductAdapter(
 
     class ProductViewHolder(
         private val binding: ProductContainerBinding,
-        private val onAddCartClick: (Product) -> Unit
+        private val onAddCartClick: (Product) -> Unit,
+        private val onProductClick: (Product) -> Unit,
+        private val addedProductIds: Set<String>
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(productItem: Product) {
-            val imageUrls = productItem.imageUrls[0]
+            val imageUrls = productItem.imageUrls.firstOrNull()
             Glide.with(binding.root.context)
                 .load(imageUrls)
                 .into(binding.ivProduct)
             binding.tvTitle.text = productItem.title
             binding.tvPrice.text = "$${productItem.price}"
 
-            binding.ivAddCart.setImageResource(R.drawable.ic_cart_plus)
+            binding.ivAddCart.setImageResource(if (addedProductIds.contains(productItem.id)) R.drawable.ic_cart_check else R.drawable.ic_cart_plus)
             binding.ivAddCart.setOnClickListener {
                 onAddCartClick(productItem)
-                binding.ivAddCart.setImageResource(R.drawable.ic_cart_check)
+            }
+            binding.root.setOnClickListener {
+                onProductClick(productItem)
             }
         }
     }

@@ -6,4 +6,5 @@ data class CartDisplayItem(
     val imageUrls: String = "",
     val price: Double = 0.0,
     val quantity: Int = 0,
+    val size: String = ""
 )

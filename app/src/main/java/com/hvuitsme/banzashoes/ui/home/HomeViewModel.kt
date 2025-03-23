@@ -11,12 +11,15 @@ import com.hvuitsme.banzashoes.data.repository.BanzaRepo
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val repository: BanzaRepo
+    private val repository: BanzaRepo,
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
     val carousel = MutableLiveData<List<Carousel>>()
     val category = MutableLiveData<List<Category>>()
     val product = MutableLiveData<List<Product>>()
+
+    val selectedCategoryPosition = state.getLiveData("SELECTED_CATEGORY_POSITION", 0)
 
     fun loadCarousel() {
         if (!carousel.value.isNullOrEmpty()) return

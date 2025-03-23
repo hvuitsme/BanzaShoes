@@ -35,4 +35,5 @@
     <string name="checkout">Checkout</string>
     <string name="zero_dollar">$0</string>
     <string name="empty_cart">Cart is empty</string>
+    <string name="buy">Buy</string>
 </resources>

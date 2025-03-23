@@ -9,30 +9,30 @@ import kotlinx.coroutines.launch
 
 class CartViewModel(
     private val repository: CartRepo
-): ViewModel() {
+) : ViewModel() {
     val cartDisplayItems = MutableLiveData<List<CartDisplayItem>>()
 
-    fun loadCartItems(){
+    fun loadCartItems() {
         viewModelScope.launch {
             cartDisplayItems.value = repository.getCartDisplayItems()
         }
     }
 
-    fun addOrUpdateCartItem(productId: String, qtyToAdd: Int = 1){
+    fun addOrUpdateCartItem(productId: String, qtyToAdd: Int = 1, size: String) {
         viewModelScope.launch {
-            if (repository.addOrUpdateCartItem(productId, qtyToAdd)){
+            if (repository.addOrUpdateCartItem(productId, qtyToAdd, size)) {
                 loadCartItems()
             }
         }
     }
 
     fun updateCartItemQty(productId: String, newQty: Int) {
-        val currentItems = cartDisplayItems.value?.toMutableList()?: return
+        val currentItems = cartDisplayItems.value?.toMutableList() ?: return
         val index = currentItems.indexOfFirst { it.productId == productId }
-        if (index != -1){
-            if (newQty == 0){
+        if (index != -1) {
+            if (newQty == 0) {
                 currentItems.removeAt(index)
-            }else{
+            } else {
                 currentItems[index] = currentItems[index].copy(quantity = newQty)
             }
             cartDisplayItems.value = currentItems
@@ -40,7 +40,7 @@ class CartViewModel(
 
         viewModelScope.launch {
             val success = repository.updateCartItemQty(productId, newQty)
-            if (!success){
+            if (!success) {
                 loadCartItems()
             }
         }

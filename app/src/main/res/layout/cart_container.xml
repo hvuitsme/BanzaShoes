@@ -78,6 +78,14 @@
                         android:background="@drawable/qty_bg_btn"
                         android:text="@string/plus"
                         android:textColor="?attr/colorOnPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvCartSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/x1"
+                        android:text="@string/sizes"
+                        android:textColor="?attr/colorOnPrimary" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

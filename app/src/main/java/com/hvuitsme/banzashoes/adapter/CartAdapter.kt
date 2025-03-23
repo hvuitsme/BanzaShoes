@@ -37,10 +37,11 @@ class CartAdapter(
     class CartViewHoler(
         private val binding: CartContainerBinding,
         private val onQtyChange: (productId: String, newQty: Int) -> Unit
-    ): RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cartItem: CartDisplayItem) {
             binding.tvCart.text = cartItem.title
             binding.tvCartPrice.text = "$${cartItem.price}"
+            binding.tvCartSize.text = "Size: ${cartItem.size}"
             binding.nbQty.text = cartItem.quantity.toString()
             Glide
                 .with(binding.root.context)
@@ -48,7 +49,7 @@ class CartAdapter(
                 .into(binding.ivCart)
 
             binding.minusBtn.setOnClickListener {
-                if (cartItem.quantity > 0){
+                if (cartItem.quantity > 0) {
                     val newQty = cartItem.quantity - 1
                     binding.nbQty.text = newQty.toString()
                     onQtyChange(cartItem.productId, newQty)

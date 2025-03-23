@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_signinFragment"
             app:destination="@id/signinFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
@@ -27,4 +30,9 @@
         android:name="com.hvuitsme.banzashoes.ui.signin.SigninFragment"
         android:label="fragment_signin"
         tools:layout="@layout/fragment_signin"/>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.hvuitsme.banzashoes.ui.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>

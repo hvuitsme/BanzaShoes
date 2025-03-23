@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -32,6 +33,7 @@ import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
 import com.hvuitsme.banzashoes.databinding.NavHeaderBinding
 import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 import com.hvuitsme.banzashoes.ui.cart.CartViewModelFactory
+import com.hvuitsme.banzashoes.ui.detailBottomSheet.AddToCartBTSDFragment
 import com.hvuitsme.test2.GoogleAuthClient
 import kotlinx.coroutines.launch
 
@@ -73,7 +75,7 @@ class HomeFragment : Fragment() {
 
 //        val databaseSource = FirebaseDataSource()
         val repository = BanzaRepoImpl(FirebaseDataSource())
-        val factory = HomeViewModelFactory(repository)
+        val factory = HomeViewModelFactory(repository, state = SavedStateHandle())
         viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
 
         val cartRepository = CartRepoImpl(CartDataSource(), FirebaseDataSource())
@@ -136,7 +138,7 @@ class HomeFragment : Fragment() {
             ?.observe(viewLifecycleOwner) { signedIn ->
                 if (signedIn) {
                     updateUi()
-                    binding.homeDrawLayout.post{
+                    binding.homeDrawLayout.post {
                         binding.homeDrawLayout.closeDrawers()
                     }
                     findNavController().currentBackStackEntry
@@ -240,23 +242,47 @@ class HomeFragment : Fragment() {
             categoryAdapter.updateDataCategory(categoryList)
             categoryAdapter.setSelectedPosition(0)
             if (categoryList.isNotEmpty()) {
-                filterProductByCategory(categoryList[0].cateId)
-                if (viewModel.product.value.isNullOrEmpty()) {
-                    viewModel.loadProduct(categoryList[0].cateId)
+                val position = viewModel.selectedCategoryPosition.value?: 0
+                categoryAdapter.setSelectedPosition(position)
+                filterProductByCategory(categoryList[position].cateId)
+                if (viewModel.product.value.isNullOrEmpty()){
+                    viewModel.loadProduct(categoryList[position].cateId)
                 }
             }
         }
 
         categoryAdapter.setOnCategoryClick { categoryItem, position ->
+            viewModel.selectedCategoryPosition.value = position
             categoryAdapter.setSelectedPosition(position)
             filterProductByCategory(categoryItem.cateId)
             viewModel.loadProduct(categoryItem.cateId)
         }
 
         product = binding.rvRecommend
-        productAdapter = ProductAdapter(emptyList()) { product ->
-            cartViewModel.addOrUpdateCartItem(product.id)
-        }
+        productAdapter = ProductAdapter(emptyList(), { product ->
+            val bottomSheet = AddToCartBTSDFragment(product) {selectedSize, qty ->
+                cartViewModel.addOrUpdateCartItem(product.id, qty, selectedSize.size)
+                productAdapter.markProductAsAdded(product.id)
+            }
+            bottomSheet.show(childFragmentManager, "AddToCartBottomSheet")
+        }, { product ->
+            val bundle = Bundle().apply {
+                putString("productId", product.id)
+            }
+            val navOptions = navOptions {
+                anim {
+                    enter = R.anim.slide_in_from_right
+                    exit = R.anim.slide_out_to_left
+                    popEnter = R.anim.pop_slide_in_from_left
+                    popExit = R.anim.pop_slide_out_from_right
+                }
+            }
+            findNavController().navigate(
+                R.id.action_homeFragment_to_detailFragment,
+                bundle,
+                navOptions
+            )
+        })
         product.adapter = productAdapter
 
         product.layoutManager = GridLayoutManager(requireContext(), 2)
