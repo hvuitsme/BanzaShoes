@@ -2,11 +2,16 @@ package com.hvuitsme.banzashoes.data.remote
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.hvuitsme.banzashoes.data.model.Cart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CartDataSource {
     private val database = FirebaseDatabase.getInstance()
@@ -29,7 +34,6 @@ class CartDataSource {
                         cartRef.child("qty").setValue(newQty).await()
                     }
                 } else {
-                    // Tạo mục mới với thông tin productId, qty và size
                     val newItem = mapOf(
                         "productId" to productId,
                         "qty" to qtyToAdd,
@@ -44,15 +48,25 @@ class CartDataSource {
             }
         }
 
-    suspend fun getCartItems(): List<Cart> = withContext(Dispatchers.IO) {
-        try {
-            val uid = auth.currentUser?.uid ?: return@withContext emptyList()
-            val snapshot = database.getReference("Cart").child(uid).get().await()
-            snapshot.children.mapNotNull { it.getValue(Cart::class.java) }
-        } catch (e: Exception) {
-            Log.e("CartDataSource", "Error fetching cart items: ${e.message}")
-            emptyList()
+    suspend fun getCartItems(): List<Cart> = suspendCoroutine { cont ->
+        val uid = auth.currentUser?.uid
+        if (uid == null) {
+            cont.resume(emptyList())
+            return@suspendCoroutine
         }
+        val ref = database.getReference("Cart").child(uid)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val cartList = snapshot.children.mapNotNull { it.getValue(Cart::class.java) }
+                cont.resume(cartList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                cont.resume(emptyList())
+            }
+
+        })
+
     }
 
     suspend fun updateCartItemQty(productId: String, newQty: Int): Boolean =

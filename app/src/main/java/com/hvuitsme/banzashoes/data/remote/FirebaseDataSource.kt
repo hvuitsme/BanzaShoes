@@ -45,7 +45,7 @@ class FirebaseDataSource {
                 .get()
                 .await()
             snapshot.children.mapNotNull { it.getValue(Product::class.java) }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.e("FirebaseDataSource", "Error fetching products data: ${e.message}")
             emptyList()
         }
@@ -60,8 +60,8 @@ class FirebaseDataSource {
                 .get()
                 .await()
             snapshot.children.firstOrNull()?.getValue(Product::class.java)
-        }catch (e: Exception){
-            Log.e("FirebaseDataSource","Error fetching product by id ${e.message}")
+        } catch (e: Exception) {
+            Log.e("FirebaseDataSource", "Error fetching product by id ${e.message}")
             null
         }
     }
