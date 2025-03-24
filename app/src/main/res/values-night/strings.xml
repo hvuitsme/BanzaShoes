@@ -35,5 +35,23 @@
     <string name="checkout">Checkout</string>
     <string name="zero_dollar">$0</string>
     <string name="empty_cart">Cart is empty</string>
+    <string name="Dashboard">Dashboard</string>
+    <string name="banner">Banner</string>
+    <string name="category">Category</string>
+    <string name="product">Product</string>
+    <string name="bill">Bill</string>
+    <string name="user">User</string>
     <string name="buy">Buy</string>
+    <string name="sign_in">Sign In</string>
+    <string name="signup">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="additional_info">Additional Information</string>
+    <string name="done">Done</string>
+    <string name="additional_info_txt">After registering using methods like google or github, we need to add information for them.</string>
+    <string name="Signup">Sign Up</string>
+    <string name="verify_otp">Verify Otp</string>
+    <string name="enter_otp">Enter OTP code</string>
+    <string name="summary">Summary</string>
+    <string name="order">Order</string>
+    <string name="recent_order">Recent Order</string>
 </resources>

@@ -85,4 +85,7 @@ dependencies {
 
     //dot indicator
     implementation ("com.tbuonomo:dotsindicator:4.3")
+
+    //chart
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
