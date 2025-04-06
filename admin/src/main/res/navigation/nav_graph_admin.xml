@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeAdminFragment">
+
+    <fragment
+        android:id="@+id/homeAdminFragment"
+        android:name="com.hvuitsme.admin.ui.home.HomeAdminFragment"
+        android:label="fragment_home_admin"
+        tools:layout="@layout/fragment_home_admin" >
+        <action
+            android:id="@+id/action_homeAdminFragment_to_bannerFragment"
+            app:destination="@id/bannerFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_productFragment"
+            app:destination="@id/productFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bannerFragment"
+        android:name="com.hvuitsme.admin.ui.banner.BannerFragment"
+        android:label="fragment_banner"
+        tools:layout="@layout/fragment_banner" />
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.hvuitsme.admin.ui.product.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" />
+    <fragment
+        android:id="@+id/brandFragment"
+        android:name="com.hvuitsme.admin.ui.product.BrandFragment"
+        android:label="BrandFragment">
+
+        <argument
+            android:name="brand"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.hvuitsme.admin.ui.category.CategoryFragment"
+        android:label="fragment_category"
+        tools:layout="@layout/fragment_category" />
+</navigation>

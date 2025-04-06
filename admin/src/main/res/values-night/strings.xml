@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Dashboard">Dashboard</string>
+    <string name="banner">Banner</string>
+    <string name="product">Product</string>
+    <string name="category">Category</string>
+    <string name="user">User</string>
+    <string name="bill">Bill</string>
+    <string name="order">Order</string>
+    <string name="recent_order">Recent Order</string>
+    <string name="title">Title</string>
+    <string name="Add">+ Add</string>
+    <string name="plus">+</string>
+</resources>
