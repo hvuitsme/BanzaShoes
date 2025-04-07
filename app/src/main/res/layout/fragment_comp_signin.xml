@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.auth.CompSigninFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/comp_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="?attr/colorOnPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/x2"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/additional_info"
+            android:layout_marginBottom="@dimen/x2"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/text_x3" />
+
+        <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="@dimen/x2"
+            android:background="@drawable/bg_edittext"
+            android:hint="@string/username"
+            android:paddingHorizontal="@dimen/x1" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="@dimen/x2"
+            android:background="@drawable/bg_edittext"
+            android:hint="@string/password"
+            android:paddingHorizontal="@dimen/x1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/confirm_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1"
+            android:background="@drawable/bg_btn"
+            android:padding="@dimen/x1"
+            android:text="@string/done" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -38,6 +38,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
@@ -61,6 +67,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(project(":admin"))
 
     implementation("com.google.firebase:firebase-database:20.3.0")
 
@@ -84,8 +91,15 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
     //dot indicator
-    implementation ("com.tbuonomo:dotsindicator:4.3")
+    implementation("com.tbuonomo:dotsindicator:4.3")
 
     //chart
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    //paypal
+    implementation("com.paypal.android:core-payments:2.0.0")
+    implementation("com.paypal.android:paypal-web-payments:2.0.0")
+
+    //email sender
+    implementation("com.sun.mail:jakarta.mail:2.0.1")
 }

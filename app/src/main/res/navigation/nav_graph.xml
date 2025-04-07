@@ -37,8 +37,8 @@
             android:id="@+id/action_signinFragment_to_compSigninFragment"
             app:destination="@id/compSigninFragment" />
         <action
-            android:id="@+id/action_signinFragment_to_adminFragment"
-            app:destination="@id/adminFragment" />
+            android:id="@+id/action_signinFragment_to_otpFragment"
+            app:destination="@id/otpFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_signupFragment_to_compSigninFragment"
             app:destination="@id/compSigninFragment" />
+        <action
+            android:id="@+id/action_signupFragment_to_otpFragment"
+            app:destination="@id/otpFragment" />
     </fragment>
     <fragment
         android:id="@+id/compSigninFragment"
@@ -60,12 +63,12 @@
         android:label="fragment_comp_signin"
         tools:layout="@layout/fragment_comp_signin" >
         <action
-            android:id="@+id/action_compSigninFragment_to_adminFragment"
-            app:destination="@id/adminFragment" />
+            android:id="@+id/action_compSigninFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/adminFragment"
-        android:name="com.hvuitsme.banzashoes.ui.admin.AdminFragment"
-        android:label="fragment_admin"
-        tools:layout="@layout/fragment_admin" />
+        android:id="@+id/otpFragment"
+        android:name="com.hvuitsme.banzashoes.ui.auth.OtpFragment"
+        android:label="fragment_otp"
+        tools:layout="@layout/fragment_otp" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.hvuitsme.test2
+package com.hvuitsme.banzashoes.service
 
 import android.content.Context
 import androidx.credentials.ClearCredentialStateRequest
@@ -20,7 +20,7 @@ class GoogleAuthClient(
 
     private val tag = "GoogleAuthClient: "
 
-    private val credentialManager = CredentialManager.create(context)
+    private val credentialManager = CredentialManager.Companion.create(context)
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     fun isSingedIn(): Boolean {
@@ -52,10 +52,10 @@ class GoogleAuthClient(
 
         if (
             credential is CustomCredential &&
-            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+            credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
         ) {
             try {
-                val tokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                val tokenCredential = GoogleIdTokenCredential.Companion.createFrom(credential.data)
 
                 println(tag + "name: ${tokenCredential.displayName}")
                 println(tag + "email: ${tokenCredential.id}")

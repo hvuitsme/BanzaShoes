@@ -33,8 +33,8 @@ import com.hvuitsme.banzashoes.databinding.FragmentHomeBinding
 import com.hvuitsme.banzashoes.databinding.NavHeaderBinding
 import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 import com.hvuitsme.banzashoes.ui.cart.CartViewModelFactory
-import com.hvuitsme.banzashoes.ui.detailBottomSheet.AddToCartBTSDFragment
-import com.hvuitsme.test2.GoogleAuthClient
+import com.hvuitsme.banzashoes.ui.detail.AddToCartBTSDFragment
+import com.hvuitsme.banzashoes.service.GoogleAuthClient
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -122,11 +122,7 @@ class HomeFragment : Fragment() {
                         popExit = R.anim.pop_slide_out_from_right
                     }
                 }
-                findNavController().navigate(
-                    R.id.action_homeFragment_to_signinFragment,
-                    null,
-                    navOptions
-                )
+                findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
             } else {
                 binding.homeDrawLayout.closeDrawers()
             }
@@ -150,6 +146,8 @@ class HomeFragment : Fragment() {
         binding.llSignout.setOnClickListener {
             handler.postDelayed({
                 lifecycleScope.launch {
+                    FirebaseAuth.getInstance().signOut()
+                    updateUi()
                     if (googleAuthClinet.isSingedIn()) {
                         googleAuthClinet.signOut()
                         updateUi()

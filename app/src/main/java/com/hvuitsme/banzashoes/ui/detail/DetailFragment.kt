@@ -17,7 +17,7 @@ import com.hvuitsme.banzashoes.data.repository.CartRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentDetailBinding
 import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 import com.hvuitsme.banzashoes.ui.cart.CartViewModelFactory
-import com.hvuitsme.banzashoes.ui.detailBottomSheet.AddToCartBTSDFragment
+import com.hvuitsme.banzashoes.ui.detail.AddToCartBTSDFragment
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 class DetailFragment : Fragment() {
@@ -72,7 +72,7 @@ class DetailFragment : Fragment() {
         binding.detailImageContainer.adapter = imageDetailAdapter
 
         val dotsIndicator: WormDotsIndicator = binding.dotsIndicator
-        dotsIndicator.setViewPager2(binding.detailImageContainer)
+        dotsIndicator.attachTo(binding.detailImageContainer)
 
         viewModel.product.observe(viewLifecycleOwner) { product ->
             product?.let {

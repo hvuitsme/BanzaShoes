@@ -9,22 +9,28 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.hvuitsme.banzashoes.R
-import com.hvuitsme.banzashoes.data.model.User
 import com.hvuitsme.banzashoes.data.remote.AuthDataSource
 import com.hvuitsme.banzashoes.data.repository.AuthRepoImpl
-import com.hvuitsme.banzashoes.databinding.FragmentSignupBinding
+import com.hvuitsme.banzashoes.databinding.FragmentSigninBinding
 import com.hvuitsme.banzashoes.service.GoogleAuthClient
 import kotlinx.coroutines.launch
 
-class SignupFragment : Fragment() {
-    private var _binding: FragmentSignupBinding? = null
+class SigninFragment : Fragment() {
+
+    private var _binding: FragmentSigninBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var googleAuthClient: GoogleAuthClient
 
     companion object {
-        fun newInstance() = SignupFragment()
+        fun newInstance() = SigninFragment()
     }
 
     private lateinit var viewModel: AuthViewModel
@@ -42,28 +48,28 @@ class SignupFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        return inflater.inflate(R.layout.fragment_signup, container, false)
-        _binding = FragmentSignupBinding.inflate(inflater, container, false)
+//        return inflater.inflate(R.layout.fragment_login, container, false)
+        _binding = FragmentSigninBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.signupBtn.setOnClickListener {
-            val username = binding.etUsername.text.toString().trim()
-            val email = binding.etEmail.text.toString().trim()
+        binding.loginToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+
+        binding.signinBtn.setOnClickListener {
+            val email = binding.etUsernameEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
+            if (email.isNotEmpty() && password.isNotEmpty()) {
                 viewModel.sendOtp(email)
                 val bundle = Bundle().apply {
-                    putString("username", username)
                     putString("email", email)
                     putString("password", password)
-                    putString("source", "signup")
+                    putString("source", "signin")
                 }
-                findNavController().navigate(R.id.action_signupFragment_to_otpFragment, bundle)
+                findNavController().navigate(R.id.action_signinFragment_to_otpFragment, bundle)
             } else {
                 Toast.makeText(requireContext(), "Nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
             }
@@ -85,7 +91,17 @@ class SignupFragment : Fragment() {
             }
         }
 
-        binding.signupToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        binding.signupBtn.setOnClickListener {
+            val navOption = navOptions {
+                anim {
+                    enter = R.anim.slide_in_from_right
+                    exit = R.anim.slide_out_to_left
+                    popEnter = R.anim.pop_slide_in_from_left
+                    popExit = R.anim.pop_slide_out_from_right
+                }
+            }
+            findNavController().navigate(R.id.action_signinFragment_to_signupFragment, null, navOption)
+        }
     }
 
     override fun onDestroyView() {

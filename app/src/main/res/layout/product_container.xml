@@ -44,7 +44,6 @@
             android:layout_marginTop="@dimen/x1"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@string/title"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/text_x2"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +54,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/x1"
-            android:text="@string/price"
             android:textColor="?attr/colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />

@@ -4,13 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    tools:context=".ui.auth.SigninFragment"
-    tools:ignore="ContentDescription">
+    tools:context=".ui.auth.SignupFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/login_toolbar"
+        android:id="@+id/signup_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -32,17 +29,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/x1"
-            android:text="@string/sign_in"
+            android:text="@string/signup"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/text_x3" />
 
         <EditText
-            android:id="@+id/etUsernameEmail"
+            android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginBottom="@dimen/x2"
             android:background="@drawable/bg_edittext"
-            android:hint="@string/username_email"
+            android:hint="@string/username"
+            android:paddingHorizontal="@dimen/x1" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="@dimen/x2"
+            android:background="@drawable/bg_edittext"
+            android:hint="@string/email"
             android:paddingHorizontal="@dimen/x1" />
 
         <EditText
@@ -76,36 +82,20 @@
                 android:src="@drawable/ic_google" />
 
             <ImageView
-                android:id="@+id/github_btn"
                 android:layout_width="@dimen/x3"
                 android:layout_height="@dimen/x3"
                 android:src="@drawable/ic_github" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/signup_btn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x2"
-            android:gravity="center">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/signin_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_btn"
-                android:padding="@dimen/x1"
-                android:layout_marginEnd="@dimen/x1"
-                android:text="@string/sign_in" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/signup_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_btn"
-                android:padding="@dimen/x1"
-                android:text="@string/Signup" />
-        </LinearLayout>
+            android:background="@drawable/bg_btn"
+            android:padding="@dimen/x1"
+            android:text="@string/Signup" />
 
     </LinearLayout>
 
