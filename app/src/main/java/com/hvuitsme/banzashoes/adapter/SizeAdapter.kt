@@ -3,6 +3,7 @@ package com.hvuitsme.banzashoes.adapter
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.hvuitsme.banzashoes.data.model.Size
 import com.hvuitsme.banzashoes.databinding.SizeContainerBinding
@@ -34,9 +35,13 @@ class SizeAdapter(
         val isSelected = position == selectedPosition
         holder.bind(size, isSelected)
         holder.itemView.setOnClickListener {
-            selectedPosition = position
-            onSizeSelected(size)
-            notifyDataSetChanged()
+            if (size.qty > 0) {
+                selectedPosition = position
+                onSizeSelected(size)
+                notifyDataSetChanged()
+            }else{
+                Toast.makeText(holder.itemView.context, "Out of stock", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

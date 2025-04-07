@@ -258,11 +258,23 @@ class HomeFragment : Fragment() {
 
         product = binding.rvRecommend
         productAdapter = ProductAdapter(emptyList(), { product ->
-            val bottomSheet = AddToCartBTSDFragment(product) {selectedSize, qty ->
-                cartViewModel.addOrUpdateCartItem(product.id, qty, selectedSize.size)
-                productAdapter.markProductAsAdded(product.id)
+            if (FirebaseAuth.getInstance().currentUser != null || googleAuthClinet.isSingedIn()){
+                val bottomSheet = AddToCartBTSDFragment(product) {selectedSize, qty ->
+                    cartViewModel.addOrUpdateCartItem(product.id, qty, selectedSize.size)
+                    productAdapter.markProductAsAdded(product.id)
+                }
+                bottomSheet.show(childFragmentManager, "AddToCartBottomSheet")
+            }else{
+                val navOptions = navOptions {
+                    anim {
+                        enter = R.anim.slide_in_from_right
+                        exit = R.anim.slide_out_to_left
+                        popEnter = R.anim.pop_slide_in_from_left
+                        popExit = R.anim.pop_slide_out_from_right
+                    }
+                }
+                findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
             }
-            bottomSheet.show(childFragmentManager, "AddToCartBottomSheet")
         }, { product ->
             val bundle = Bundle().apply {
                 putString("productId", product.id)
@@ -321,6 +333,15 @@ class HomeFragment : Fragment() {
         val fullProductList = viewModel.product.value ?: emptyList()
         val filteredList = fullProductList.filter { it.cateId == cateId }
         productAdapter.updateDataProduct(filteredList)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val prefs = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
+        val otpVerified = prefs.getBoolean("OTP_VERIFIED", false)
+        if (FirebaseAuth.getInstance().currentUser != null && !otpVerified) {
+            FirebaseAuth.getInstance().signOut()
+        }
     }
 
     override fun onDestroyView() {

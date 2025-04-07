@@ -1,5 +1,6 @@
 package com.hvuitsme.banzashoes.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.hvuitsme.admin.AdminMainActivity
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.data.remote.AuthDataSource
 import com.hvuitsme.banzashoes.data.repository.AuthRepoImpl
@@ -59,34 +61,49 @@ class SigninFragment : Fragment() {
         binding.loginToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
         binding.signinBtn.setOnClickListener {
-            val email = binding.etUsernameEmail.text.toString().trim()
+            val identifier = binding.etUsernameEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                viewModel.sendOtp(email)
+            if (identifier.equals("admin", true) && password == "68686868"){
+//                startActivity(Intent(requireContext(), AdminMainActivity::class.java))
+                val intent = Intent(requireContext(), AdminMainActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+                return@setOnClickListener
+            }
+            if (identifier.isNotEmpty() && password.isNotEmpty()) {
+                viewModel.sendOtp(identifier)
                 val bundle = Bundle().apply {
-                    putString("email", email)
+                    putString("email", identifier)
                     putString("password", password)
                     putString("source", "signin")
                 }
                 findNavController().navigate(R.id.action_signinFragment_to_otpFragment, bundle)
             } else {
-                Toast.makeText(requireContext(), "Nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Please fill in all information", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.googleBtn.setOnClickListener {
             lifecycleScope.launch {
-                if (googleAuthClient.isSingedIn()) {
-                    googleAuthClient.signOut()
-                } else {
-                    val result = googleAuthClient.signIn()
-                    if (result) {
-                        findNavController().previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("SIGN_IN_RESULT", true)
-                        findNavController().popBackStack()
+                val tokenCredential = googleAuthClient.getGoogleIdTokenCredential()
+                if (tokenCredential != null) {
+                    val googleEmail = tokenCredential.id
+                    val prefs = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
+                    prefs.edit()
+                        .putString("GOOGLE_ID_TOKEN", tokenCredential.idToken)
+                        .putBoolean("OTP_VERIFIED", false)
+                        .apply()
+                    viewModel.sendOtp(googleEmail)
+                    val bundle = Bundle().apply {
+                        putString("email", googleEmail)
+                        putString("password", "")
+                        putString("source", "signin")
+                        putString("auth_type", "google")
                     }
+                    findNavController().navigate(R.id.action_signinFragment_to_otpFragment, bundle)
+                } else {
+                    Toast.makeText(requireContext(), "Google sign in failed", Toast.LENGTH_SHORT).show()
                 }
             }
         }

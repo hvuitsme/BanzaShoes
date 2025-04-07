@@ -22,4 +22,20 @@ class AuthDataSource {
     suspend fun signIn(email: String, password: String): AuthResult {
         return auth.signInWithEmailAndPassword(email, password).await()
     }
+
+    suspend fun getEmailByIdentifier(identifier: String): String? {
+        return if (identifier.contains("@")) {
+            identifier
+        } else {
+            val snapshot = ref.orderByChild("username").equalTo(identifier).get().await()
+            snapshot.children.firstOrNull()?.child("email")?.getValue(String::class.java)
+        }
+    }
+
+    suspend fun isUserExist(uid: String): Boolean {
+        val snapshot = ref.child(uid).get().await()
+        return snapshot.exists() &&
+                snapshot.child("username").value != null &&
+                snapshot.child("username").value.toString().isNotEmpty()
+    }
 }

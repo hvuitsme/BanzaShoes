@@ -78,6 +78,26 @@ class GoogleAuthClient(
         }
     }
 
+    suspend fun getGoogleIdTokenCredential(): GoogleIdTokenCredential? {
+        return try {
+            val result = buildCredentialRequest()
+            val credential = result.credential
+            if (credential is CustomCredential &&
+                credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+            ) {
+                val tokenCredential = GoogleIdTokenCredential.Companion.createFrom(credential.data)
+                tokenCredential
+            } else {
+                println(tag + "credential is not GoogleIdTokenCredential")
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            if (e is CancellationException) throw e
+            null
+        }
+    }
+
     private suspend fun buildCredentialRequest(): GetCredentialResponse {
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(

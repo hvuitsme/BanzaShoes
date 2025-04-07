@@ -65,6 +65,9 @@
         <action
             android:id="@+id/action_compSigninFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_compSigninFragment_to_otpFragment"
+            app:destination="@id/otpFragment" />
     </fragment>
     <fragment
         android:id="@+id/otpFragment"

@@ -2,7 +2,6 @@ package com.hvuitsme.banzashoes.data.repository
 
 import com.hvuitsme.banzashoes.data.model.User
 import com.hvuitsme.banzashoes.data.remote.AuthDataSource
-import kotlinx.coroutines.tasks.await
 
 class AuthRepoImpl(
     private val authDataSource: AuthDataSource,
@@ -16,10 +15,15 @@ class AuthRepoImpl(
         }
     }
 
-    override suspend fun signIn(email: String, password: String): Pair<Boolean, String?> {
+    override suspend fun signIn(identifier: String, password: String): Pair<Boolean, String?> {
         return try {
-            authDataSource.signIn(email, password)
-            Pair(true, null)
+            val email = authDataSource.getEmailByIdentifier(identifier)
+            if (email == null) {
+                Pair(false, "Account not found")
+            } else {
+                authDataSource.signIn(email, password)
+                Pair(true, null)
+            }
         } catch (e: Exception) {
             Pair(false, e.message)
         }

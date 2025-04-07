@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.hvuitsme.banzashoes.data.model.User
+import com.hvuitsme.banzashoes.data.remote.AuthDataSource
 import com.hvuitsme.banzashoes.data.repository.AuthRepo
 import com.hvuitsme.banzashoes.service.EmailSenderService
 import kotlinx.coroutines.launch
@@ -19,8 +20,20 @@ class AuthViewModel(
     private val _signInResult = MutableLiveData<Pair<Boolean, String?>>()
     val signInResult: LiveData<Pair<Boolean, String?>> = _signInResult
 
-    fun sendOtp(email: String) {
-        EmailSenderService.sendOtpEmail(email)
+    fun sendOtp(identifier: String) {
+        viewModelScope.launch {
+            val recipientEmail = if (identifier.contains("@")) {
+                identifier
+            } else {
+                val authDataSource = AuthDataSource()
+                authDataSource.getEmailByIdentifier(identifier)
+            }
+            if (recipientEmail != null) {
+                EmailSenderService.sendOtpEmail(recipientEmail)
+            } else {
+                _signInResult.value = Pair(false, "Error sending OTP")
+            }
+        }
     }
 
     fun verifyOtpAndSignUp(user: User, otpInput: String) {
@@ -30,7 +43,7 @@ class AuthViewModel(
                 _signUpResult.value = result
             }
         } else {
-            _signUpResult.value = Pair(false, "OTP không hợp lệ")
+            _signUpResult.value = Pair(false, "Invalid OTP")
         }
     }
 
@@ -41,7 +54,8 @@ class AuthViewModel(
                 _signInResult.value = result
             }
         } else {
-            _signInResult.value = Pair(false, "OTP không hợp lệ")
+            FirebaseAuth.getInstance().signOut()
+            _signInResult.value = Pair(false, "Invalid OTP")
         }
     }
 }

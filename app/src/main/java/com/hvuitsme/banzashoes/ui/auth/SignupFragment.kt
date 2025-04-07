@@ -71,16 +71,24 @@ class SignupFragment : Fragment() {
 
         binding.googleBtn.setOnClickListener {
             lifecycleScope.launch {
-                if (googleAuthClient.isSingedIn()) {
-                    googleAuthClient.signOut()
-                } else {
-                    val result = googleAuthClient.signIn()
-                    if (result) {
-                        findNavController().previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("SIGN_IN_RESULT", true)
-                        findNavController().popBackStack()
+                val tokenCredential = googleAuthClient.getGoogleIdTokenCredential()
+                if (tokenCredential != null) {
+                    val googleEmail = tokenCredential.id
+                    val prefs = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
+                    prefs.edit()
+                        .putString("GOOGLE_ID_TOKEN", tokenCredential.idToken)
+                        .putBoolean("OTP_VERIFIED", false)
+                        .apply()
+                    viewModel.sendOtp(googleEmail)
+                    val bundle = Bundle().apply {
+                        putString("email", googleEmail)
+                        putString("password", "")
+                        putString("source", "signin")
+                        putString("auth_type", "google")
                     }
+                    findNavController().navigate(R.id.action_signinFragment_to_otpFragment, bundle)
+                } else {
+                    Toast.makeText(requireContext(), "Google sign in failed", Toast.LENGTH_SHORT).show()
                 }
             }
         }
