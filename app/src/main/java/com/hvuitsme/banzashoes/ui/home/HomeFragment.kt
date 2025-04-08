@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -102,6 +104,16 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isSearchOpen) {
+                    closeSearch()
+                } else {
+                    findNavController().popBackStack()
+                }
+            }
+        })
+
         val searchView = binding.topAppBar.findViewById<SearchView>(R.id.searchView)
 
         val closeButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
@@ -172,20 +184,26 @@ class HomeFragment : Fragment() {
         updateUi()
 
         navHeader.setOnClickListener {
-
-            if (!googleAuthClinet.isSingedIn()) {
-                val navOptions = navOptions {
-                    anim {
-                        enter = R.anim.slide_in_from_right
-                        exit = R.anim.slide_out_to_left
-                        popEnter = R.anim.pop_slide_in_from_left
-                        popExit = R.anim.pop_slide_out_from_right
+            binding.homeDrawLayout.closeDrawers()
+            binding.homeDrawLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+                override fun onDrawerOpened(drawerView: View) {}
+                override fun onDrawerClosed(drawerView: View) {
+                    binding.homeDrawLayout.removeDrawerListener(this)
+                    if (!googleAuthClinet.isSingedIn()) {
+                        val navOptions = navOptions {
+                            anim {
+                                enter = R.anim.slide_in_from_right
+                                exit = R.anim.slide_out_to_left
+                                popEnter = R.anim.pop_slide_in_from_left
+                                popExit = R.anim.pop_slide_out_from_right
+                            }
+                        }
+                        findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
                     }
                 }
-                findNavController().navigate(R.id.action_homeFragment_to_signinFragment, null, navOptions)
-            } else {
-                binding.homeDrawLayout.closeDrawers()
-            }
+                override fun onDrawerStateChanged(newState: Int) {}
+            })
         }
 
         findNavController().currentBackStackEntry
@@ -421,6 +439,7 @@ class HomeFragment : Fragment() {
         searchMenuItem.setIcon(R.drawable.ic_search)
         isSearchOpen = false
         binding.rvSearchProducts.visibility = View.GONE
+        binding.loadingBg.visibility = View.GONE
     }
 
     override fun onStart() {

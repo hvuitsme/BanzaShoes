@@ -48,17 +48,7 @@ class CartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cartToolbar.setNavigationOnClickListener {
-            val navOptions = navOptions {
-                launchSingleTop = true
-                restoreState = true
-                anim {
-                    enter = R.anim.pop_slide_in_from_left
-                    exit = R.anim.pop_slide_out_from_right
-                    popEnter = R.anim.slide_in_from_right
-                    popExit = R.anim.slide_out_to_left
-                }
-            }
-            findNavController().navigateUp()
+            findNavController().popBackStack()
         }
 
         cartAdapter = CartAdapter(emptyList()) { productId, newQty ->

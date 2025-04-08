@@ -1,12 +1,10 @@
 package com.hvuitsme.banzashoes
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.hvuitsme.admin.AdminMainActivity
 import com.hvuitsme.banzashoes.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
