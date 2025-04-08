@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hvuitsme.banzashoes.R
-import com.hvuitsme.banzashoes.data.model.User
 import com.hvuitsme.banzashoes.data.remote.AuthDataSource
 import com.hvuitsme.banzashoes.data.repository.AuthRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentSignupBinding
@@ -20,7 +19,6 @@ import kotlinx.coroutines.launch
 class SignupFragment : Fragment() {
     private var _binding: FragmentSignupBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var googleAuthClient: GoogleAuthClient
 
     companion object {
@@ -31,30 +29,23 @@ class SignupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val repository = AuthRepoImpl(AuthDataSource())
         val factory = AuthViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
         googleAuthClient = GoogleAuthClient(requireContext())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-//        return inflater.inflate(R.layout.fragment_signup, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSignupBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.signupBtn.setOnClickListener {
             val username = binding.etUsername.text.toString().trim()
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
-
             if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                 viewModel.sendOtp(email)
                 val bundle = Bundle().apply {
@@ -68,17 +59,14 @@ class SignupFragment : Fragment() {
                 Toast.makeText(requireContext(), "Nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
             }
         }
-
         binding.googleBtn.setOnClickListener {
             lifecycleScope.launch {
                 val tokenCredential = googleAuthClient.getGoogleIdTokenCredential()
                 if (tokenCredential != null) {
                     val googleEmail = tokenCredential.id
                     val prefs = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
-                    prefs.edit()
-                        .putString("GOOGLE_ID_TOKEN", tokenCredential.idToken)
-                        .putBoolean("OTP_VERIFIED", false)
-                        .apply()
+                    prefs.edit().putString("GOOGLE_ID_TOKEN", tokenCredential.idToken)
+                        .putBoolean("OTP_VERIFIED", false).apply()
                     viewModel.sendOtp(googleEmail)
                     val bundle = Bundle().apply {
                         putString("email", googleEmail)
@@ -92,7 +80,6 @@ class SignupFragment : Fragment() {
                 }
             }
         }
-
         binding.signupToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
     }
 

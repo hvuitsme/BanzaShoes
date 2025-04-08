@@ -32,26 +32,20 @@ class OtpFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val repository = AuthRepoImpl(AuthDataSource())
         val factory = AuthViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
-
         userEmail = arguments?.getString("email") ?: ""
         source = arguments?.getString("source") ?: "signup"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentOtpBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupOtpInputs(
             binding.otpBox1,
             binding.otpBox2,
@@ -60,7 +54,6 @@ class OtpFragment : Fragment() {
             binding.otpBox5,
             binding.otpBox6
         )
-
         binding.signupBtn.setOnClickListener {
             val otp = binding.otpBox1.text.toString() +
                     binding.otpBox2.text.toString() +
@@ -68,7 +61,6 @@ class OtpFragment : Fragment() {
                     binding.otpBox4.text.toString() +
                     binding.otpBox5.text.toString() +
                     binding.otpBox6.text.toString()
-
             if (source == "signup") {
                 val username = arguments?.getString("username") ?: ""
                 val email = arguments?.getString("email") ?: ""
@@ -112,7 +104,6 @@ class OtpFragment : Fragment() {
                 }
             }
         }
-
         viewModel.signUpResult.observe(viewLifecycleOwner) { resultPair ->
             val (result, errorMsg) = resultPair
             if (result) {
@@ -122,7 +113,6 @@ class OtpFragment : Fragment() {
                 Toast.makeText(requireContext(), errorMsg ?: "Sign up failed", Toast.LENGTH_SHORT).show()
             }
         }
-
         viewModel.signInResult.observe(viewLifecycleOwner) { resultPair ->
             val (result, errorMsg) = resultPair
             if (result) {
@@ -150,7 +140,10 @@ class OtpFragment : Fragment() {
             })
             editTexts[i].setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DEL) {
-                    if (editTexts[i].text.isNotEmpty()) {
+                    if (editTexts[i].text.isEmpty() && i > 0) {
+                        editTexts[i - 1].requestFocus()
+                        editTexts[i - 1].text.clear()
+                    } else {
                         editTexts[i].text.clear()
                     }
                     true

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.auth.CompSigninFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -33,14 +34,18 @@
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/text_x3" />
 
-        <EditText
-            android:id="@+id/etUsername"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/x2"
-            android:background="@drawable/bg_edittext"
-            android:hint="@string/username"
-            android:paddingHorizontal="@dimen/x1" />
+            android:background="@drawable/bg_edittext">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/username"
+                android:paddingHorizontal="@dimen/x1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/confirm_btn"
@@ -50,7 +55,5 @@
             android:background="@drawable/bg_btn"
             android:padding="@dimen/x1"
             android:text="@string/done" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

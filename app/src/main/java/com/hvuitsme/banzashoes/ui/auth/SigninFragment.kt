@@ -11,11 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.hvuitsme.admin.AdminMainActivity
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.data.remote.AuthDataSource
@@ -25,10 +20,8 @@ import com.hvuitsme.banzashoes.service.GoogleAuthClient
 import kotlinx.coroutines.launch
 
 class SigninFragment : Fragment() {
-
     private var _binding: FragmentSigninBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var googleAuthClient: GoogleAuthClient
 
     companion object {
@@ -39,33 +32,24 @@ class SigninFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val repository = AuthRepoImpl(AuthDataSource())
         val factory = AuthViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
         googleAuthClient = GoogleAuthClient(requireContext())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-//        return inflater.inflate(R.layout.fragment_login, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSigninBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.loginToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
-
         binding.signinBtn.setOnClickListener {
             val identifier = binding.etUsernameEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
-
-            if (identifier.equals("admin", true) && password == "68686868"){
-//                startActivity(Intent(requireContext(), AdminMainActivity::class.java))
+            if (identifier.equals("admin", true) && password == "68686868") {
                 val intent = Intent(requireContext(), AdminMainActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
@@ -83,17 +67,14 @@ class SigninFragment : Fragment() {
                 Toast.makeText(requireContext(), "Please fill in all information", Toast.LENGTH_SHORT).show()
             }
         }
-
         binding.googleBtn.setOnClickListener {
             lifecycleScope.launch {
                 val tokenCredential = googleAuthClient.getGoogleIdTokenCredential()
                 if (tokenCredential != null) {
                     val googleEmail = tokenCredential.id
                     val prefs = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
-                    prefs.edit()
-                        .putString("GOOGLE_ID_TOKEN", tokenCredential.idToken)
-                        .putBoolean("OTP_VERIFIED", false)
-                        .apply()
+                    prefs.edit().putString("GOOGLE_ID_TOKEN", tokenCredential.idToken)
+                        .putBoolean("OTP_VERIFIED", false).apply()
                     viewModel.sendOtp(googleEmail)
                     val bundle = Bundle().apply {
                         putString("email", googleEmail)
@@ -107,7 +88,6 @@ class SigninFragment : Fragment() {
                 }
             }
         }
-
         binding.signupBtn.setOnClickListener {
             val navOption = navOptions {
                 anim {

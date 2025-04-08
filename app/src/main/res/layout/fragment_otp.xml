@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -40,77 +41,108 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/otp_box_1"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_edittext"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textAlignment="center"
-                android:textSize="18sp" />
+                android:gravity="center">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otp_box_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/otp_box_2"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_edittext"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textAlignment="center"
-                android:textSize="18sp" />
+                android:gravity="center">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otp_box_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/otp_box_3"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_edittext"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textAlignment="center"
-                android:textSize="18sp" />
+                android:gravity="center">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otp_box_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/otp_box_4"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_edittext"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textAlignment="center"
-                android:textSize="18sp" />
+                android:gravity="center">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otp_box_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/otp_box_5"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_edittext"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textAlignment="center"
-                android:textSize="18sp" />
+                android:gravity="center">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otp_box_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/otp_box_6"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_edittext"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textAlignment="center"
-                android:textSize="18sp" />
+                android:gravity="center">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otp_box_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -121,5 +153,4 @@
             android:padding="@dimen/x1"
             android:text="@string/verify_otp" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

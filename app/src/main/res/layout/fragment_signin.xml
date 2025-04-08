@@ -36,23 +36,33 @@
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/text_x3" />
 
-        <EditText
-            android:id="@+id/etUsernameEmail"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/x2"
-            android:background="@drawable/bg_edittext"
-            android:hint="@string/username_email"
-            android:paddingHorizontal="@dimen/x1" />
+            android:background="@drawable/bg_edittext">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUsernameEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/username_email"
+                android:paddingHorizontal="@dimen/x1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etPassword"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            app:endIconMode="password_toggle"
             android:layout_marginBottom="@dimen/x2"
-            android:background="@drawable/bg_edittext"
-            android:hint="@string/password"
-            android:paddingHorizontal="@dimen/x1" />
+            android:background="@drawable/bg_edittext">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:hint="@string/password"
+                android:paddingHorizontal="@dimen/x1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -80,7 +90,6 @@
                 android:layout_width="@dimen/x3"
                 android:layout_height="@dimen/x3"
                 android:src="@drawable/ic_github" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -106,7 +115,5 @@
                 android:padding="@dimen/x1"
                 android:text="@string/Signup" />
         </LinearLayout>
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
