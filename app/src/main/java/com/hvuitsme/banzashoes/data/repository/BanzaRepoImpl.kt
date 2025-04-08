@@ -23,4 +23,8 @@ class BanzaRepoImpl(
     override suspend fun getProductsById(productId: String): Product? {
         return databaseSource.getProductsById(productId)
     }
+
+    override suspend fun getAllProducts(): List<Product> {
+        return databaseSource.getAllProducts()
+    }
 }

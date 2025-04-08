@@ -65,4 +65,14 @@ class FirebaseDataSource {
             null
         }
     }
+
+    suspend fun getAllProducts(): List<Product> {
+        return try {
+            val snapshot = database.getReference("Product").get().await()
+            snapshot.children.mapNotNull { it.getValue(Product::class.java) }
+        } catch (e: Exception) {
+            Log.e("FirebaseDataSource", "Error fetching all products: ${e.message}")
+            emptyList()
+        }
+    }
 }

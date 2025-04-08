@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
@@ -20,11 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.Job
 import com.google.firebase.auth.FirebaseAuth
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.CarouselAdapter
 import com.hvuitsme.banzashoes.adapter.CategoryAdapter
 import com.hvuitsme.banzashoes.adapter.ProductAdapter
+import com.hvuitsme.banzashoes.adapter.SearchProductAdapter
 import com.hvuitsme.banzashoes.data.remote.CartDataSource
 import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
 import com.hvuitsme.banzashoes.data.repository.BanzaRepoImpl
@@ -35,12 +38,15 @@ import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 import com.hvuitsme.banzashoes.ui.cart.CartViewModelFactory
 import com.hvuitsme.banzashoes.ui.detail.AddToCartBTSDFragment
 import com.hvuitsme.banzashoes.service.GoogleAuthClient
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private var isSearchOpen = false
 
     private val autoScrollDelay = 4000L
     private val handler = Handler(Looper.getMainLooper())
@@ -51,10 +57,12 @@ class HomeFragment : Fragment() {
     private lateinit var carousel: ViewPager2
     private lateinit var category: RecyclerView
     private lateinit var product: RecyclerView
+    private lateinit var searchProductsRV: RecyclerView
 
     private lateinit var carouselAdapter: CarouselAdapter
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var productAdapter: ProductAdapter
+    private lateinit var searchAdapter: SearchProductAdapter
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
@@ -73,7 +81,6 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val databaseSource = FirebaseDataSource()
         val repository = BanzaRepoImpl(FirebaseDataSource())
         val factory = HomeViewModelFactory(repository, state = SavedStateHandle())
         viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
@@ -94,6 +101,59 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val searchView = binding.topAppBar.findViewById<SearchView>(R.id.searchView)
+
+        val closeButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        closeButton.setOnClickListener {
+            searchView.visibility = View.GONE
+            searchView.setQuery("", false)
+            searchView.clearFocus()
+            val searchMenuItem = binding.topAppBar.menu.findItem(R.id.search_toolbar)
+            searchMenuItem.setIcon(R.drawable.ic_search)
+            isSearchOpen = false
+            binding.rvSearchProducts.visibility = View.GONE
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { viewModel.searchProduct(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    viewModel.searchProduct(it)
+                    binding.rvSearchProducts.visibility = if (it.isNotBlank()) View.VISIBLE else View.GONE
+                }
+                return true
+            }
+        })
+
+        searchProductsRV = binding.rvSearchProducts
+        searchAdapter = SearchProductAdapter(emptyList()) { product ->
+            val bundle = Bundle().apply {
+                putString("productId", product.id)
+            }
+            val navOptions = navOptions {
+                anim {
+                    enter = R.anim.slide_in_from_right
+                    exit = R.anim.slide_out_to_left
+                    popEnter = R.anim.pop_slide_in_from_left
+                    popExit = R.anim.pop_slide_out_from_right
+                }
+            }
+            findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle, navOptions)
+        }
+
+        searchProductsRV.adapter = searchAdapter
+        searchProductsRV.layoutManager =
+            LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL, false)
+        searchProductsRV.isNestedScrollingEnabled = false
+
+        viewModel.searchResult.observe(viewLifecycleOwner) { searchList ->
+            searchAdapter.updateDataSearch(searchList)
+        }
 
         binding.homeSwipeRefresh.setOnRefreshListener {
 
@@ -171,6 +231,23 @@ class HomeFragment : Fragment() {
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.search_toolbar ->{
+                    if (!isSearchOpen){
+                        searchView.visibility = View.VISIBLE
+                        binding.loadingBg.visibility = View.VISIBLE
+                        searchView.isIconified = false
+                        menuItem.setIcon(R.drawable.ic_xmark)
+                    }else{
+                        searchView.visibility = View.GONE
+                        searchView.setQuery("", false)
+                        searchView.clearFocus()
+                        menuItem.setIcon(R.drawable.ic_search)
+                        binding.rvSearchProducts.visibility = View.GONE
+                        binding.loadingBg.visibility = View.GONE
+                    }
+                    isSearchOpen = !isSearchOpen
+                    true
+                }
                 R.id.cart_toolbar -> {
                     val currentUser = FirebaseAuth.getInstance().currentUser
                     val navOptions = navOptions {
@@ -335,12 +412,30 @@ class HomeFragment : Fragment() {
         productAdapter.updateDataProduct(filteredList)
     }
 
+    private fun closeSearch() {
+        val searchView = binding.topAppBar.findViewById<SearchView>(R.id.searchView)
+        searchView.visibility = View.GONE
+        searchView.setQuery("", false)
+        searchView.clearFocus()
+        val searchMenuItem = binding.topAppBar.menu.findItem(R.id.search_toolbar)
+        searchMenuItem.setIcon(R.drawable.ic_search)
+        isSearchOpen = false
+        binding.rvSearchProducts.visibility = View.GONE
+    }
+
     override fun onStart() {
         super.onStart()
         val prefs = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
         val otpVerified = prefs.getBoolean("OTP_VERIFIED", false)
         if (FirebaseAuth.getInstance().currentUser != null && !otpVerified) {
             FirebaseAuth.getInstance().signOut()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isSearchOpen) {
+            closeSearch()
         }
     }
 

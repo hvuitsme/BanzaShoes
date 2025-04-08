@@ -19,6 +19,7 @@ class HomeViewModel(
     val category = MutableLiveData<List<Category>>()
     val product = MutableLiveData<List<Product>>()
 
+    val searchResult = MutableLiveData<List<Product>>()
     val selectedCategoryPosition = state.getLiveData("SELECTED_CATEGORY_POSITION", 0)
 
     fun loadCarousel() {
@@ -41,6 +42,21 @@ class HomeViewModel(
         viewModelScope.launch {
             val data = repository.getProductsByCategory(selectedCateId)
             product.value = data
+        }
+    }
+
+    fun searchProduct(query: String) {
+        viewModelScope.launch {
+            if (query.isBlank()){
+                searchResult.value = emptyList()
+            }else{
+                val allProduct = repository.getAllProducts()
+                val filltered = allProduct.filter {
+                    it.title.contains(query, ignoreCase = true) ||
+                    it.brand.contains(query, ignoreCase = true)
+                }
+                searchResult.value = filltered
+            }
         }
     }
 }

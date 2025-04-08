@@ -55,4 +55,5 @@
     <string name="order">Order</string>
     <string name="recent_order">Recent Order</string>
     <string name="phone">Phone</string>
+    <string name="search_hint">Seach</string>
 </resources>

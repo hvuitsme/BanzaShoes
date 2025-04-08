@@ -12,22 +12,56 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/logo_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_banza"
+            app:layout_constraintTop_toTopOf="@id/topAppBar"
+            app:layout_constraintBottom_toBottomOf="@id/topAppBar"
+            app:layout_constraintEnd_toEndOf="@id/topAppBar"
+            app:layout_constraintStart_toStartOf="@id/topAppBar" />
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/top_appbar_menu"
             app:navigationIcon="@drawable/ic_menu"
             app:navigationIconTint="?attr/navIconColor">
 
-            <ImageView
-                android:id="@+id/logo_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/logo_banza" />
+            <FrameLayout
+                android:id="@+id/overlay_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    style="@style/CustomSearchView"
+                    android:layout_width="match_parent"
+                    android:hint="@string/search_hint"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:visibility="gone" />
+            </FrameLayout>
+
         </com.google.android.material.appbar.MaterialToolbar>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchProducts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHeight_max="270dp"
+            android:layout_marginHorizontal="@dimen/x1"
+            android:background="@color/white"
+            android:visibility="gone"
+            android:elevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/topAppBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/homeSwipeRefresh"
@@ -134,21 +168,13 @@
         <View
             android:id="@+id/loadingBg"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="#80000000"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone" />
-
-        <ProgressBar
-            android:id="@+id/homeLoading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/topAppBar"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

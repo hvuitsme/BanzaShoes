@@ -14,5 +14,12 @@
         <!-- Customize your theme here. -->
         <item name="navIconColor">@color/black</item>
         <item name="navigationIcon">@color/black</item>
+        <item name="searchViewStyle">@style/CustomSearchView</item>
+    </style>
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="searchIcon">@null</item>
+        <item name="closeIcon">@null</item>
+        <item name="searchHintIcon">@null</item>
     </style>
 </resources>

@@ -9,4 +9,5 @@ interface BanzaRepo {
     suspend fun getCategories(): List<Category>
     suspend fun getProductsByCategory(cateId: String): List<Product>
     suspend fun getProductsById(productId: String): Product?
+    suspend fun getAllProducts(): List<Product>
 }
