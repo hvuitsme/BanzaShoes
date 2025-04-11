@@ -56,4 +56,7 @@
     <string name="recent_order">Recent Order</string>
     <string name="phone">Phone</string>
     <string name="search_hint">Seach</string>
+    <string name="address">Address</string>
+    <string name="choose_address">Choose address</string>
+    <string name="edit">Edit</string>
 </resources>

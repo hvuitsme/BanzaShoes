@@ -51,4 +51,7 @@ class CartRepoImpl(
         return cartDataSource.updateCartItemQty(productId, newQty)
     }
 
+    override suspend fun clearCart(): Boolean {
+        return cartDataSource.clearCartItems()
+    }
 }

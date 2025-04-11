@@ -31,11 +31,4 @@ class AuthDataSource {
             snapshot.children.firstOrNull()?.child("email")?.getValue(String::class.java)
         }
     }
-
-    suspend fun isUserExist(uid: String): Boolean {
-        val snapshot = ref.child(uid).get().await()
-        return snapshot.exists() &&
-                snapshot.child("username").value != null &&
-                snapshot.child("username").value.toString().isNotEmpty()
-    }
 }

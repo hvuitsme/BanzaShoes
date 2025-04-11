@@ -24,7 +24,11 @@
         android:id="@+id/cartFragment"
         android:name="com.hvuitsme.banzashoes.ui.cart.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart"/>
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signinFragment"
         android:name="com.hvuitsme.banzashoes.ui.auth.SigninFragment"
@@ -74,4 +78,27 @@
         android:name="com.hvuitsme.banzashoes.ui.auth.OtpFragment"
         android:label="fragment_otp"
         tools:layout="@layout/fragment_otp" />
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.hvuitsme.banzashoes.ui.checkout.CheckoutFragment"
+        android:label="fragment_checkout"
+        tools:layout="@layout/fragment_checkout" >
+        <action
+            android:id="@+id/action_checkoutFragment_to_addressFragment"
+            app:destination="@id/addressFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/addressFragment"
+        android:name="com.hvuitsme.banzashoes.ui.address.AddressFragment"
+        android:label="fragment_address"
+        tools:layout="@layout/fragment_address" >
+        <action
+            android:id="@+id/action_addressFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.hvuitsme.banzashoes.ui.address.AddAddressFragment"
+        android:label="fragment_add_address"
+        tools:layout="@layout/fragment_add_address" />
 </navigation>

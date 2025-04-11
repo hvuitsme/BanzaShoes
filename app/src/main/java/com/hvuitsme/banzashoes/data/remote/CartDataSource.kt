@@ -91,4 +91,15 @@ class CartDataSource {
                 false
             }
         }
+
+    suspend fun clearCartItems(): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val uid = auth.currentUser?.uid ?: return@withContext false
+            database.getReference("Cart").child(uid).removeValue().await()
+            true
+        } catch (e: Exception) {
+            Log.e("CartDataSource", "Error clearing cart: ${e.message}")
+            false
+        }
+    }
 }
