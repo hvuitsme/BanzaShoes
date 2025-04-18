@@ -42,8 +42,19 @@ android {
         resources {
             excludes += "/META-INF/NOTICE.md"
             excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
         }
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
+}
+
+tasks.withType<Test>{
+    useJUnitPlatform()
 }
 
 dependencies {
@@ -64,10 +75,25 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.jupiter.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":admin"))
+
+    //Unit test
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.platform.launcher)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.mockito.kotlin)
+    debugImplementation(libs.androidx.fragment.testing)
+    testImplementation(libs.androidx.core.testing)
+
+    implementation(fileTree("libs"){
+        include("*.aar", "*.jar")
+    })
 
     implementation("com.google.firebase:firebase-database:20.3.0")
 

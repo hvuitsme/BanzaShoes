@@ -1,11 +1,16 @@
 package com.hvuitsme.banzashoes
 
+import android.app.ComponentCaller
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hvuitsme.banzashoes.databinding.ActivityMainBinding
+import com.hvuitsme.banzashoes.payment.zalopay.config.ZaloPayConfig
+import vn.zalopay.sdk.Environment
+import vn.zalopay.sdk.ZaloPaySDK
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -23,8 +28,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        ZaloPaySDK.init(ZaloPayConfig.ZP_APP_ID, Environment.SANDBOX)
 //        binding.btnTest.setOnClickListener {
 //            startActivity(Intent(this, AdminMainActivity::class.java))
 //        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        ZaloPaySDK.getInstance().onResult(intent)
     }
 }

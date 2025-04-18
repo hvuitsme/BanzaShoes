@@ -1,14 +1,15 @@
 package com.hvuitsme.banzashoes.ui.checkout
 
 import android.app.ProgressDialog
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -27,104 +28,89 @@ import com.hvuitsme.banzashoes.data.repository.CheckoutRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentCheckoutBinding
 import com.hvuitsme.banzashoes.ui.address.AddressViewModel
 import com.hvuitsme.banzashoes.ui.address.AddressViewModelFactory
+import vn.zalopay.sdk.ZaloPaySDK
+import vn.zalopay.sdk.listeners.PayOrderListener
+import vn.zalopay.sdk.ZaloPayError
 
 class CheckoutFragment : Fragment() {
     private var _binding: FragmentCheckoutBinding? = null
     private val binding get() = _binding!!
-
     private var progressDialog: ProgressDialog? = null
-
     private lateinit var shopListAdapter: ShopListAdapter
-
-    companion object {
-        fun newInstance() = CheckoutFragment()
-    }
-
     private lateinit var viewModel: CheckoutViewModel
     private lateinit var addressViewModel: AddressViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val cartRepository = CartRepoImpl(CartDataSource(), FirebaseDataSource())
-        val checkoutRepository = CheckoutRepoImpl(CheckoutDataSource())
-        val checkoutFactory = CheckoutViewModelFactory(cartRepository, checkoutRepository)
-        viewModel = ViewModelProvider(this, checkoutFactory).get(CheckoutViewModel::class.java)
+        val cartRepo = CartRepoImpl(CartDataSource(), FirebaseDataSource())
+        val checkoutRepo = CheckoutRepoImpl(CheckoutDataSource())
+        val checkoutFactory = CheckoutViewModelFactory(cartRepo, checkoutRepo)
+        viewModel = ViewModelProvider(this, checkoutFactory)[CheckoutViewModel::class.java]
 
         val addressFactory = AddressViewModelFactory(AddressRepoImpl(AddressDataSource()))
-        addressViewModel = ViewModelProvider(requireActivity(), addressFactory).get(AddressViewModel::class.java)
+        addressViewModel = ViewModelProvider(requireActivity(), addressFactory)[AddressViewModel::class.java]
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-//        return inflater.inflate(R.layout.fragment_checkout, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCheckoutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.checkoutToolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
-
+        binding.checkoutToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
         binding.llAddress.setOnClickListener {
-            Log.d("CheckoutFragment", "llAddress clicked, navigating to AddressFragment")
-            val navOptions = navOptions {
+            val opts = navOptions {
                 anim {
-                    enter = R.anim.slide_in_from_right
-                    exit = R.anim.slide_out_to_left
+                    enter    = R.anim.slide_in_from_right
+                    exit     = R.anim.slide_out_to_left
                     popEnter = R.anim.pop_slide_in_from_left
-                    popExit = R.anim.pop_slide_out_from_right
+                    popExit  = R.anim.pop_slide_out_from_right
                 }
             }
-            findNavController().navigate(R.id.action_checkoutFragment_to_addressFragment, null, navOptions)
+            findNavController().navigate(R.id.action_checkoutFragment_to_addressFragment, null, opts)
         }
 
         shopListAdapter = ShopListAdapter(emptyList())
         binding.rvShopList.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            adapter = shopListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter       = shopListAdapter
         }
 
         viewModel.loadCartDetails()
-        viewModel.subtotal.observe(viewLifecycleOwner) { sub ->
-            binding.tvSubtotal.text = "$${"%.2f".format(sub)}"
-        }
-        viewModel.shipping.observe(viewLifecycleOwner) { ship ->
-            binding.tvShipping.text = "$${"%.2f".format(ship)}"
-        }
-        viewModel.total.observe(viewLifecycleOwner) { tot ->
-            binding.tvTotal.text = "$${"%.2f".format(tot)}"
-        }
-        viewModel.cartDisplayItems.observe(viewLifecycleOwner) { items ->
-            shopListAdapter.updateItems(items)
-        }
+        viewModel.subtotal.observe(viewLifecycleOwner)       { binding.tvSubtotal.text = "$${"%.2f".format(it)}" }
+        viewModel.shipping.observe(viewLifecycleOwner)       { binding.tvShipping.text = "$${"%.2f".format(it)}" }
+        viewModel.total.observe(viewLifecycleOwner)          { binding.tvTotal.text = "$${"%.2f".format(it)}" }
+        viewModel.cartDisplayItems.observe(viewLifecycleOwner){ shopListAdapter.updateItems(it) }
+
+        viewModel.setPaymentMethod("ZaloPay")
+        binding.radioZaloPay.isChecked = true
+        binding.radioMomo.isChecked    = false
+        binding.radioCOD.isChecked     = false
 
         binding.cardZaloPay.setOnClickListener {
             viewModel.setPaymentMethod("ZaloPay")
             binding.radioZaloPay.isChecked = true
-            binding.radioMomo.isChecked = false
-            binding.radioCOD.isChecked = false
+            binding.radioMomo.isChecked    = false
+            binding.radioCOD.isChecked     = false
         }
         binding.cardMomo.setOnClickListener {
             viewModel.setPaymentMethod("Momo")
             binding.radioZaloPay.isChecked = false
-            binding.radioMomo.isChecked = true
-            binding.radioCOD.isChecked = false
+            binding.radioMomo.isChecked    = true
+            binding.radioCOD.isChecked     = false
         }
         binding.cardCOD.setOnClickListener {
             viewModel.setPaymentMethod("COD")
             binding.radioZaloPay.isChecked = false
-            binding.radioMomo.isChecked = false
-            binding.radioCOD.isChecked = true
+            binding.radioMomo.isChecked    = false
+            binding.radioCOD.isChecked     = true
         }
 
-        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
+        viewModel.loading.observe(viewLifecycleOwner) {
+            if (it) {
                 progressDialog = ProgressDialog(context).apply {
                     setMessage("Processing payment...")
                     setCancelable(false)
@@ -135,56 +121,79 @@ class CheckoutFragment : Fragment() {
             }
         }
 
+        viewModel.paymentToken.observe(viewLifecycleOwner) { token ->
+            if (token.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Failed to create ZaloPay order", Toast.LENGTH_LONG).show()
+                return@observe
+            }
+            ZaloPaySDK.getInstance().payOrder(
+                requireActivity(),
+                token,
+                "banzashoes://app",
+                object : PayOrderListener {
+                    override fun onPaymentSucceeded(transactionId: String?, transToken: String?, appTransId: String?) {
+                        viewModel.processPayment { ok ->
+                            if (ok) {
+                                Toast.makeText(requireContext(), "Payment successful", Toast.LENGTH_LONG).show()
+                                findNavController().popBackStack()
+                            } else {
+                                Toast.makeText(requireContext(), "Payment failed", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                    override fun onPaymentCanceled(transactionId: String?, transToken: String?) {
+                        Toast.makeText(requireContext(), "Payment cancelled", Toast.LENGTH_LONG).show()
+                    }
+                    override fun onPaymentError(error: ZaloPayError?, transactionId: String?, errorMessage: String?) {
+                        Toast.makeText(requireContext(), "Payment error", Toast.LENGTH_LONG).show()
+                    }
+                }
+            )
+        }
+
         binding.btnPayment.setOnClickListener {
-            viewModel.processPayment { success ->
-                if (success) {
-                    Toast.makeText(requireContext(), "Payment Successful", Toast.LENGTH_LONG).show()
-                    findNavController().popBackStack()
-                } else {
-                    Toast.makeText(requireContext(), "Payment Failed", Toast.LENGTH_LONG).show()
+            when (viewModel._paymentMethod.value) {
+                "ZaloPay" -> viewModel.createZaloPayOrder()
+                "Momo"    -> { /* Momo flow */ }
+                else      -> viewModel.processPayment { ok ->
+                    if (ok) {
+                        Toast.makeText(requireContext(), "Payment successful", Toast.LENGTH_LONG).show()
+                        findNavController().popBackStack()
+                    } else {
+                        Toast.makeText(requireContext(), "Payment failed", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
 
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            addressViewModel.loadAddress(userId)
-        } else {
-            Log.d("CheckoutFragment", "User not logged in; cannot load address")
-        }
-
-        addressViewModel.selectedAddress.observe(viewLifecycleOwner) { selectedAddress ->
-            if (selectedAddress != null) {
-                updateAddressUI(selectedAddress)
-                viewModel.setSelectedAddress(selectedAddress)
+        FirebaseAuth.getInstance().currentUser?.uid?.let { addressViewModel.loadAddress(it) }
+        addressViewModel.selectedAddress.observe(viewLifecycleOwner) {
+            it?.let { a ->
+                binding.layoutAddressDetails.isVisible = true
+                binding.btnAddAddress.isVisible = false
+                binding.tvReceiverName.text  = a.name
+                binding.tvReceiverPhone.text = a.phone
+                binding.tvAddressLine1.text  = a.address
+                binding.tvAddressLine2.text  = ""
+                viewModel.setSelectedAddress(a)
             }
         }
-
-        addressViewModel.addressList.observe(viewLifecycleOwner) { addresses ->
+        addressViewModel.addressList.observe(viewLifecycleOwner) { list ->
             if (addressViewModel.selectedAddress.value == null) {
-                addresses.find { it.dfAddress }?.let { defaultAddress ->
-                    updateAddressUI(defaultAddress)
-                    viewModel.setSelectedAddress(defaultAddress)
+                list.find { it.dfAddress }?.let { d ->
+                    binding.layoutAddressDetails.isVisible = true
+                    binding.btnAddAddress.isVisible = false
+                    binding.tvReceiverName.text  = d.name
+                    binding.tvReceiverPhone.text = d.phone
+                    binding.tvAddressLine1.text  = d.address
+                    binding.tvAddressLine2.text  = ""
+                    viewModel.setSelectedAddress(d)
                 } ?: run {
                     binding.layoutAddressDetails.visibility = View.GONE
-                    binding.btnAddAddress.visibility = View.VISIBLE
+                    binding.btnAddAddress.visibility        = View.VISIBLE
                 }
             }
         }
-    }
-
-    private fun updateAddressUI(address: Address) {
-        binding.layoutAddressDetails.isVisible = true
-        binding.btnAddAddress.isVisible = false
-        binding.tvReceiverName.text = address.name
-        binding.tvReceiverPhone.text = address.phone
-        binding.tvAddressLine1.text = address.address
-        binding.tvAddressLine2.text = ""
-        Log.d("CheckoutFragment", "UI updated with address: ${address.name}")
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onDestroyView() {

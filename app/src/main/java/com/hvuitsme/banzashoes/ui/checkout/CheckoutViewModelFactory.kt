@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hvuitsme.banzashoes.data.repository.CartRepo
 import com.hvuitsme.banzashoes.data.repository.CheckoutRepo
+import com.hvuitsme.banzashoes.payment.zalopay.ZaloPayRepository
 
 @Suppress("UNCHECKED_CAST")
 class CheckoutViewModelFactory(
