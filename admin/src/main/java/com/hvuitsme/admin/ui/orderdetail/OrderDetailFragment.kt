@@ -23,7 +23,7 @@ class OrderDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: OrderViewModel
     private lateinit var detailAdapter: OrderDetailAdapter
-    private val statuses = listOf("Pending", "Processing", "Success", "Cancelled")
+    private val statuses = listOf("Pending", "Processing", "Shipping", "Success", "Cancelled")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

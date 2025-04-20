@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,6 +20,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.hvuitsme.admin.R
 import com.hvuitsme.admin.adapter.RecentOrderAdapter
 import com.hvuitsme.admin.data.remote.OrderDataSource
@@ -30,6 +33,9 @@ class HomeAdminFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var recentAdapter: RecentOrderAdapter
+
+    private var revenueMap: Map<String, Double> = emptyMap()
+    private var cancelledMap: Map<String, Int> = emptyMap()
 
     companion object {
         fun newInstance() = HomeAdminFragment()
@@ -56,7 +62,6 @@ class HomeAdminFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupLineChart()
 
         binding.adminToolbar.setNavigationOnClickListener {
             val intent = Intent().apply {
@@ -109,6 +114,25 @@ class HomeAdminFragment : Fragment() {
                 navOption)
         }
 
+        binding.spinnerTimeframe.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            Timeframe.values().map { it.name }
+        )
+        binding.spinnerTimeframe.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val tf = Timeframe.values()[position]
+                viewModel.loadRevenue(tf)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
         recentAdapter = RecentOrderAdapter(emptyList()) { order ->
             findNavController().navigate(
                 R.id.action_homeAdminFragment_to_orderDetailFragment,
@@ -122,51 +146,34 @@ class HomeAdminFragment : Fragment() {
         viewModel.orders.observe(viewLifecycleOwner) {
             recentAdapter.updateData(it)
         }
+
+        viewModel.revenueByTime.observe(viewLifecycleOwner) { map ->
+            revenueMap = map
+            drawChart()
+        }
     }
 
-    private fun setupLineChart() {
-        val entries = mutableListOf<Entry>()
-        entries.add(Entry(6f, 112f))
-        entries.add(Entry(8f, 115f))
-        entries.add(Entry(10f, 114f))
-        entries.add(Entry(12f, 110f))
-        entries.add(Entry(14f, 116f))
-        entries.add(Entry(16f, 113f))
-        entries.add(Entry(18f, 115f))
-        entries.add(Entry(20f, 112f))
+    private fun drawChart() {
+        val keys = (revenueMap.keys + cancelledMap.keys).toSortedSet().toList()
+        val revenueEntries = keys.mapIndexed { i, key ->
+            Entry(i.toFloat(), revenueMap[key]?.toFloat() ?: 0f)
+        }
+        val revenueDataSet = LineDataSet(revenueEntries, "Revenue").apply {
+            setDrawValues(false)
+            setDrawCircles(true)
+            lineWidth = 2f
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            cubicIntensity = 0.2f
+        }
 
-        val lineDataSet = LineDataSet(entries, "Ví dụ DataSet")
-        lineDataSet.color = Color.BLACK
-        lineDataSet.setDrawValues(false)
-        lineDataSet.setDrawCircles(true)
-        lineDataSet.circleRadius = 4f
-        lineDataSet.circleHoleRadius = 2f
-        lineDataSet.setCircleColor(Color.BLACK)
-        lineDataSet.lineWidth = 2f
-
-        lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        lineDataSet.cubicIntensity = 0.2f
-
-        val data = LineData(lineDataSet)
-
-        binding.lineChart.data = data
-
-        binding.lineChart.description.isEnabled = false
-        binding.lineChart.setPinchZoom(true)
-        binding.lineChart.xAxis.setDrawGridLines(false)
-        binding.lineChart.axisLeft.setDrawGridLines(true)
+        binding.lineChart.data = LineData(revenueDataSet)
+        binding.lineChart.xAxis.apply {
+            valueFormatter = IndexAxisValueFormatter(keys)
+            position = XAxis.XAxisPosition.BOTTOM
+            granularity = 1f
+        }
         binding.lineChart.axisRight.isEnabled = false
-
-        val xAxis = binding.lineChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.granularity = 2f
-        xAxis.axisMinimum = 6f
-        xAxis.axisMaximum = 20f
-
-        val leftAxis = binding.lineChart.axisLeft
-        leftAxis.axisMinimum = 100f
-        leftAxis.axisMaximum = 120f
-
+        binding.lineChart.description.isEnabled = false
         binding.lineChart.invalidate()
     }
 
