@@ -10,5 +10,6 @@ data class Order(
     val subtotal: Double,
     val shipping: Double,
     val total: Double,
+    val status: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )

@@ -1,5 +1,7 @@
 package com.hvuitsme.admin.ui.home
 
+import android.content.ComponentName
+import android.content.Intent
 import android.graphics.Color
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -7,12 +9,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.hvuitsme.admin.R
+import com.hvuitsme.admin.adapter.RecentOrderAdapter
+import com.hvuitsme.admin.data.remote.OrderDataSource
+import com.hvuitsme.admin.data.repository.OrderRepoImpl
 import com.hvuitsme.admin.databinding.FragmentHomeAdminBinding
 import kotlin.getValue
 
@@ -20,16 +29,20 @@ class HomeAdminFragment : Fragment() {
     private var _binding: FragmentHomeAdminBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var recentAdapter: RecentOrderAdapter
+
     companion object {
         fun newInstance() = HomeAdminFragment()
     }
 
-    private val viewModel: HomeAdminViewModel by viewModels()
+    private lateinit var viewModel: HomeAdminViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: Use the ViewModel
+        val repository = OrderRepoImpl(OrderDataSource())
+        val factory = HomeViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[HomeAdminViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -45,16 +58,69 @@ class HomeAdminFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupLineChart()
 
+        binding.adminToolbar.setNavigationOnClickListener {
+            val intent = Intent().apply {
+                component = ComponentName(
+                    "com.hvuitsme.banzashoes",
+                    "com.hvuitsme.banzashoes.MainActivity"
+                )
+            }
+            requireContext().startActivity(intent)
+            requireActivity().finish()
+        }
+
+        val navOption = navOptions {
+            anim {
+                enter    = R.anim.slide_in_from_right
+                exit     = R.anim.slide_out_to_left
+                popEnter = R.anim.pop_slide_in_from_left
+                popExit  = R.anim.pop_slide_out_from_right
+            }
+        }
+
         binding.llBanner.setOnClickListener {
-            findNavController().navigate(R.id.action_homeAdminFragment_to_bannerFragment)
+            findNavController().navigate(
+                R.id.action_homeAdminFragment_to_bannerFragment,
+                null,
+                navOption
+            )
         }
 
         binding.llProduct.setOnClickListener {
-            findNavController().navigate(R.id.action_homeAdminFragment_to_productFragment)
+            findNavController().navigate(
+                R.id.action_homeAdminFragment_to_productFragment,
+                null,
+                navOption
+            )
         }
 
         binding.llCategory.setOnClickListener {
-            findNavController().navigate(R.id.action_homeAdminFragment_to_categoryFragment)
+            findNavController().navigate(
+                R.id.action_homeAdminFragment_to_categoryFragment,
+                null,
+                navOption
+            )
+        }
+
+        binding.llOrder.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_homeAdminFragment_to_orderFragment,
+                null,
+                navOption)
+        }
+
+        recentAdapter = RecentOrderAdapter(emptyList()) { order ->
+            findNavController().navigate(
+                R.id.action_homeAdminFragment_to_orderDetailFragment,
+                bundleOf("orderId" to order.id),
+                navOption
+            )
+        }
+        binding.rvRecent.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvRecent.adapter = recentAdapter
+
+        viewModel.orders.observe(viewLifecycleOwner) {
+            recentAdapter.updateData(it)
         }
     }
 

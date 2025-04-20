@@ -15,20 +15,15 @@ class OrderViewModel(
     val orders: LiveData<List<Order>> get() = _orders
 
     init {
-        fetchOrders()
-    }
-
-    private fun fetchOrders() {
-        viewModelScope.launch {
-            val list = orderRepository.getOrders()
-            _orders.postValue(list)
+        orderRepository.observeOrder { list ->
+            val recent = list.sortedByDescending { it.timestamp }
+            _orders.postValue(recent)
         }
     }
 
-    fun updateOrderStatus(orderId: String, newStatus: String) {
+    fun updateOrderStatus(order: Order, newStatus: String) {
         viewModelScope.launch {
-            orderRepository.updateStatus(orderId, newStatus)
-            fetchOrders()
+            orderRepository.updateStatus(order.id, newStatus)
         }
     }
 }

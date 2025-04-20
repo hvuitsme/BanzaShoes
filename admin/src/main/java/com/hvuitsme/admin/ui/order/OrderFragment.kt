@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hvuitsme.admin.R
 import com.hvuitsme.admin.adapter.OrderAdapter
@@ -49,11 +51,23 @@ class OrderFragment : Fragment() {
         }
 
         adapter = OrderAdapter(emptyList(), onItemClick = { order ->
-            val newStatus = if (order.status == "Shipping") "Success" else "Shipping"
-            viewModel.updateOrderStatus(order.id, newStatus)
+            val navOption = navOptions {
+                anim {
+                    enter = R.anim.slide_in_from_right
+                    exit = R.anim.slide_out_to_left
+                    popEnter = R.anim.pop_slide_in_from_left
+                    popExit = R.anim.pop_slide_out_from_right
+                }
+            }
+            findNavController().navigate(
+                R.id.action_orderFragment_to_orderDetailFragment,
+                bundleOf("orderId" to order.id),
+                navOption
+            )
         })
         binding.rvOrder.adapter = adapter
-        binding.rvOrder.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvOrder.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         viewModel.orders.observe(viewLifecycleOwner) { orders ->
             adapter.updateData(orders)
         }

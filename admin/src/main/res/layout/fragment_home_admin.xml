@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@null">
+        app:navigationIcon="@drawable/ic_logout">
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,9 +28,9 @@
         android:id="@+id/ll_manager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/x2"
         android:orientation="horizontal"
         android:paddingVertical="@dimen/x2"
-        android:layout_marginHorizontal="@dimen/x2"
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -126,27 +126,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_bill"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_marginEnd="@dimen/x2"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_money_bills_solid" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/bill"
-                    android:textColor="?attr/colorOnPrimary" />
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/ll_order"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
@@ -181,12 +160,23 @@
         app:layout_constraintTop_toBottomOf="@id/ll_manager" />
 
     <TextView
+        android:id="@+id/tvRecent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/lineChart"
-        app:layout_constraintStart_toStartOf="@id/lineChart"
-        android:textSize="@dimen/text_x2"
+        android:layout_marginVertical="@dimen/x1"
         android:text="@string/recent_order"
         android:textColor="?attr/colorOnPrimary"
-        android:layout_marginVertical="@dimen/x1"/>
+        android:textSize="@dimen/text_x2"
+        app:layout_constraintStart_toStartOf="@id/lineChart"
+        app:layout_constraintTop_toBottomOf="@id/lineChart" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRecent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x1"
+        android:paddingHorizontal="@dimen/x2"
+        app:layout_constraintTop_toBottomOf="@id/tvRecent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
