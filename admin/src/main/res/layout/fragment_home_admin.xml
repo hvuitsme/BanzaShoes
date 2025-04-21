@@ -154,35 +154,68 @@
         android:id="@+id/spinnerTimeframe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ll_manager"
+        android:layout_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintTop_toBottomOf="@id/ll_manager" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/lineChart"
         android:layout_width="0dp"
         android:layout_height="300dp"
-        app:layout_constraintTop_toBottomOf="@id/spinnerTimeframe"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinnerTimeframe" />
+
+    <LinearLayout
+        android:id="@+id/llMetrics"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lineChart">
+
+        <TextView
+            android:id="@+id/tvTotalOrders"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Orders: 0"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/text_x1" />
+
+        <TextView
+            android:id="@+id/tvAvgOrderValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AOV: 0"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/text_x1" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvRecent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:text="@string/recent_order"
-        app:layout_constraintTop_toBottomOf="@id/lineChart"
+        android:textColor="?attr/colorOnPrimary"
+        android:textSize="@dimen/text_x2"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintTop_toBottomOf="@id/llMetrics" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecent"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tvRecent"
+        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvRecent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

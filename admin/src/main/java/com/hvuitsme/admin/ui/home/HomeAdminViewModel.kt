@@ -20,6 +20,12 @@ class HomeAdminViewModel(
     private val _revenueByTime = MutableLiveData<Map<String, Double>>()
     val revenueByTime: LiveData<Map<String, Double>> = _revenueByTime
 
+    private val _orderCountByTime = MutableLiveData<Map<String, Int>>()
+    val orderCountByTime: LiveData<Map<String, Int>> = _orderCountByTime
+
+    private val _avgOrderValueByTime = MutableLiveData<Map<String, Double>>()
+    val avgOrderValueByTime: LiveData<Map<String, Double>> = _avgOrderValueByTime
+
     init {
         repository.observeOrder { list ->
             val recent = list.sortedByDescending { it.timestamp }.take(5)
@@ -27,15 +33,9 @@ class HomeAdminViewModel(
         }
     }
 
-
-    fun updateStatus(order: Order, newStatus: String) {
-        viewModelScope.launch {
-            repository.updateStatus(order.id, newStatus)
-        }
-    }
-
     fun loadRevenue(timeframe: Timeframe) {
         repository.observeOrder { list ->
+            val success = list.filter { it.status == "Success" }
             val pattern = when (timeframe) {
                 Timeframe.DAY -> "MM-dd"
                 Timeframe.MONTH -> "yyyy-MM"
@@ -43,11 +43,24 @@ class HomeAdminViewModel(
             }
             val sdf = SimpleDateFormat(pattern, Locale.getDefault())
 
-            val success = list.filter { it.status == "Success" }
-            val groupedSuccess = success.groupBy { sdf.format(Date(it.timestamp)) }
-            val summedSuccess = groupedSuccess.mapValues { it.value.sumOf { it.total } }
-                .toSortedMap()
-            _revenueByTime.postValue(summedSuccess)
+            val grouped = success.groupBy { sdf.format(Date(it.timestamp)) }
+
+            val revMap = grouped.mapValues { entry ->
+                entry.value.sumOf { it.total }
+            }.toSortedMap()
+
+            val cntMap = grouped.mapValues { entry ->
+                entry.value.size
+            }.toSortedMap()
+
+            val aovMap = revMap.mapValues { (entry, rev) ->
+                val cnt = cntMap[entry] ?: 1
+                rev / cnt
+            }
+
+            _revenueByTime.postValue(revMap)
+            _orderCountByTime.postValue(cntMap)
+            _avgOrderValueByTime.postValue(aovMap)
         }
     }
 }

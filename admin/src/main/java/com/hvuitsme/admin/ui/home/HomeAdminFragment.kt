@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -35,7 +36,8 @@ class HomeAdminFragment : Fragment() {
     private lateinit var recentAdapter: RecentOrderAdapter
 
     private var revenueMap: Map<String, Double> = emptyMap()
-    private var cancelledMap: Map<String, Int> = emptyMap()
+    private var orderCountMap: Map<String, Int> = emptyMap()
+    private var avgOrderValueMap: Map<String, Double> = emptyMap()
 
     companion object {
         fun newInstance() = HomeAdminFragment()
@@ -151,30 +153,56 @@ class HomeAdminFragment : Fragment() {
             revenueMap = map
             drawChart()
         }
+
+        viewModel.orderCountByTime.observe(viewLifecycleOwner) { cnt ->
+            orderCountMap = cnt
+            updateMetricsText()
+        }
+        viewModel.avgOrderValueByTime.observe(viewLifecycleOwner) { aov ->
+            avgOrderValueMap = aov
+            updateMetricsText()
+        }
     }
 
     private fun drawChart() {
-        val keys = (revenueMap.keys + cancelledMap.keys).toSortedSet().toList()
-        val revenueEntries = keys.mapIndexed { i, key ->
-            Entry(i.toFloat(), revenueMap[key]?.toFloat() ?: 0f)
+        val keys = revenueMap.keys.toList()
+        val entries = keys.mapIndexed { i, k ->
+            Entry(i.toFloat(), revenueMap[k]?.toFloat() ?: 0f)
         }
-        val revenueDataSet = LineDataSet(revenueEntries, "Revenue").apply {
-            setDrawValues(false)
+        val set = LineDataSet(entries, "Revenue").apply {
+            color = Color.BLACK
             setDrawCircles(true)
             lineWidth = 2f
             mode = LineDataSet.Mode.CUBIC_BEZIER
             cubicIntensity = 0.2f
+            setDrawValues(false)
+
+            setDrawFilled(true)
+            fillDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.chart_gradient_fill)
+            fillAlpha = 200
         }
 
-        binding.lineChart.data = LineData(revenueDataSet)
-        binding.lineChart.xAxis.apply {
-            valueFormatter = IndexAxisValueFormatter(keys)
-            position = XAxis.XAxisPosition.BOTTOM
-            granularity = 1f
+        binding.lineChart.apply {
+            data = LineData(set)
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                valueFormatter = IndexAxisValueFormatter(keys)
+            }
+            axisRight.isEnabled = false
+            description.isEnabled = false
+            animateX(400)
+            invalidate()
         }
-        binding.lineChart.axisRight.isEnabled = false
-        binding.lineChart.description.isEnabled = false
-        binding.lineChart.invalidate()
+    }
+
+    private fun updateMetricsText() {
+        val totalOrders = orderCountMap.values.sum()
+        val totalRevenue = revenueMap.values.sum()
+        val avgOrderValue = if (totalOrders > 0) totalRevenue / totalOrders else 0.0
+
+        binding.tvTotalOrders.text = "Orders: $totalOrders"
+        binding.tvAvgOrderValue.text = "AOV: ${"%,.2f".format(avgOrderValue)}"
     }
 
     override fun onDestroyView() {
