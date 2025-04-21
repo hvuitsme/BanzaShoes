@@ -169,10 +169,20 @@ class HomeFragment : Fragment() {
 
         binding.homeSwipeRefresh.setOnRefreshListener {
 
-            binding.homeSwipeRefresh.isRefreshing = false
+            binding.homeSwipeRefresh.isRefreshing = true
+
+            handler.removeCallbacks(autoScrollRunnable)
 
             handler.postDelayed({
-            }, 2000)
+                carouselAdapter.updateDataCarousel(emptyList())
+                categoryAdapter.updateDataCategory(emptyList())
+                productAdapter.updateDataProduct(emptyList())
+
+                viewModel.loadCarousel(force = true)
+                viewModel.loadCategory(force = true)
+
+                binding.homeSwipeRefresh.isRefreshing = false
+            }, 2000L)
         }
 
         googleAuthClinet = GoogleAuthClient(requireContext())
@@ -333,12 +343,13 @@ class HomeFragment : Fragment() {
 
         viewModel.category.observe(viewLifecycleOwner) { categoryList ->
             categoryAdapter.updateDataCategory(categoryList)
-            categoryAdapter.setSelectedPosition(0)
+
             if (categoryList.isNotEmpty()) {
-                val position = viewModel.selectedCategoryPosition.value?: 0
+                val position = viewModel.selectedCategoryPosition.value ?: 0
                 categoryAdapter.setSelectedPosition(position)
+                category.scrollToPosition(position)
                 filterProductByCategory(categoryList[position].cateId)
-                if (viewModel.product.value.isNullOrEmpty()){
+                if (viewModel.product.value.isNullOrEmpty()) {
                     viewModel.loadProduct(categoryList[position].cateId)
                 }
             }
@@ -347,6 +358,7 @@ class HomeFragment : Fragment() {
         categoryAdapter.setOnCategoryClick { categoryItem, position ->
             viewModel.selectedCategoryPosition.value = position
             categoryAdapter.setSelectedPosition(position)
+            category.scrollToPosition(position)
             filterProductByCategory(categoryItem.cateId)
             viewModel.loadProduct(categoryItem.cateId)
         }

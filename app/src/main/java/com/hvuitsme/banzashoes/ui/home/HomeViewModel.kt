@@ -22,16 +22,16 @@ class HomeViewModel(
     val searchResult = MutableLiveData<List<Product>>()
     val selectedCategoryPosition = state.getLiveData("SELECTED_CATEGORY_POSITION", 0)
 
-    fun loadCarousel() {
-        if (!carousel.value.isNullOrEmpty()) return
+    fun loadCarousel(force: Boolean = false) {
+        if (!force && !carousel.value.isNullOrEmpty()) return
         viewModelScope.launch {
             val data = repository.getCarousel()
             carousel.value = data
         }
     }
 
-    fun loadCategory() {
-        if (!category.value.isNullOrEmpty()) return
+    fun loadCategory(force: Boolean = false) {
+        if (!force && !category.value.isNullOrEmpty()) return
         viewModelScope.launch {
             val data = repository.getCategories()
             category.value = data
