@@ -15,9 +15,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.ShopListAdapter
 import com.hvuitsme.banzashoes.data.model.Address
+import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.data.remote.AddressDataSource
 import com.hvuitsme.banzashoes.data.remote.CartDataSource
 import com.hvuitsme.banzashoes.data.remote.CheckoutDataSource
@@ -33,6 +36,7 @@ import vn.zalopay.sdk.listeners.PayOrderListener
 import vn.zalopay.sdk.ZaloPayError
 
 class CheckoutFragment : Fragment() {
+
     private var _binding: FragmentCheckoutBinding? = null
     private val binding get() = _binding!!
     private var progressDialog: ProgressDialog? = null
@@ -42,32 +46,28 @@ class CheckoutFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val cartRepo = CartRepoImpl(CartDataSource(), FirebaseDataSource())
         val checkoutRepo = CheckoutRepoImpl(CheckoutDataSource())
-        val checkoutFactory = CheckoutViewModelFactory(cartRepo, checkoutRepo)
-        viewModel = ViewModelProvider(this, checkoutFactory)[CheckoutViewModel::class.java]
-
+        viewModel = ViewModelProvider(this, CheckoutViewModelFactory(cartRepo, checkoutRepo))[CheckoutViewModel::class.java]
         val addressFactory = AddressViewModelFactory(AddressRepoImpl(AddressDataSource()))
         addressViewModel = ViewModelProvider(requireActivity(), addressFactory)[AddressViewModel::class.java]
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) : View {
         _binding = FragmentCheckoutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         binding.checkoutToolbar.setNavigationOnClickListener { findNavController().popBackStack() }
         binding.llAddress.setOnClickListener {
             val opts = navOptions {
                 anim {
-                    enter    = R.anim.slide_in_from_right
-                    exit     = R.anim.slide_out_to_left
+                    enter = R.anim.slide_in_from_right
+                    exit = R.anim.slide_out_to_left
                     popEnter = R.anim.pop_slide_in_from_left
-                    popExit  = R.anim.pop_slide_out_from_right
+                    popExit = R.anim.pop_slide_out_from_right
                 }
             }
             findNavController().navigate(R.id.action_checkoutFragment_to_addressFragment, null, opts)
@@ -76,37 +76,56 @@ class CheckoutFragment : Fragment() {
         shopListAdapter = ShopListAdapter(emptyList())
         binding.rvShopList.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter       = shopListAdapter
+            adapter = shopListAdapter
         }
 
-        viewModel.loadCartDetails()
-        viewModel.subtotal.observe(viewLifecycleOwner)       { binding.tvSubtotal.text = "$${"%.2f".format(it)}" }
-        viewModel.shipping.observe(viewLifecycleOwner)       { binding.tvShipping.text = "$${"%.2f".format(it)}" }
-        viewModel.total.observe(viewLifecycleOwner)          { binding.tvTotal.text = "$${"%.2f".format(it)}" }
-        viewModel.cartDisplayItems.observe(viewLifecycleOwner){ shopListAdapter.updateItems(it) }
+        val args = arguments
+        if (args?.containsKey("cartItems") == true) {
+            val cartJson = args.getString("cartItems")!!
+            val type = object : TypeToken<List<CartDisplayItem>>() {}.type
+            val items: List<CartDisplayItem> = Gson().fromJson(cartJson, type)
+            shopListAdapter.updateItems(items)
+            viewModel.cartDisplayItems.value = items
+            val sub = args.getDouble("subtotal", 0.0)
+            val ship = args.getDouble("shipping", 0.0)
+            val tot = args.getDouble("total", 0.0)
+            binding.tvSubtotal.text = "$${"%.2f".format(sub)}"
+            binding.tvShipping.text = "$${"%.2f".format(ship)}"
+            binding.tvTotal.text = "$${"%.2f".format(tot)}"
+            viewModel.subtotal.value = sub
+            viewModel.shipping.value = ship
+            viewModel.total.value = tot
+        } else {
+            viewModel.loadCartDetails()
+        }
+
+        viewModel.subtotal.observe(viewLifecycleOwner) { binding.tvSubtotal.text = "$${"%.2f".format(it)}" }
+        viewModel.shipping.observe(viewLifecycleOwner) { binding.tvShipping.text = "$${"%.2f".format(it)}" }
+        viewModel.total.observe(viewLifecycleOwner) { binding.tvTotal.text = "$${"%.2f".format(it)}" }
+        viewModel.cartDisplayItems.observe(viewLifecycleOwner) { shopListAdapter.updateItems(it) }
 
         viewModel.setPaymentMethod("ZaloPay")
         binding.radioZaloPay.isChecked = true
-        binding.radioMomo.isChecked    = false
-        binding.radioCOD.isChecked     = false
+        binding.radioMomo.isChecked = false
+        binding.radioCOD.isChecked = false
 
         binding.cardZaloPay.setOnClickListener {
             viewModel.setPaymentMethod("ZaloPay")
             binding.radioZaloPay.isChecked = true
-            binding.radioMomo.isChecked    = false
-            binding.radioCOD.isChecked     = false
+            binding.radioMomo.isChecked = false
+            binding.radioCOD.isChecked = false
         }
         binding.cardMomo.setOnClickListener {
             viewModel.setPaymentMethod("Momo")
             binding.radioZaloPay.isChecked = false
-            binding.radioMomo.isChecked    = true
-            binding.radioCOD.isChecked     = false
+            binding.radioMomo.isChecked = true
+            binding.radioCOD.isChecked = false
         }
         binding.cardCOD.setOnClickListener {
             viewModel.setPaymentMethod("COD")
             binding.radioZaloPay.isChecked = false
-            binding.radioMomo.isChecked    = false
-            binding.radioCOD.isChecked     = true
+            binding.radioMomo.isChecked = false
+            binding.radioCOD.isChecked = true
         }
 
         viewModel.loading.observe(viewLifecycleOwner) {
@@ -154,8 +173,8 @@ class CheckoutFragment : Fragment() {
         binding.btnPayment.setOnClickListener {
             when (viewModel._paymentMethod.value) {
                 "ZaloPay" -> viewModel.createZaloPayOrder()
-                "Momo"    -> { /* Momo flow */ }
-                else      -> viewModel.processPayment { ok ->
+                "Momo" -> { }
+                else -> viewModel.processPayment { ok ->
                     if (ok) {
                         Toast.makeText(requireContext(), "Payment successful", Toast.LENGTH_LONG).show()
                         findNavController().popBackStack()
@@ -171,10 +190,10 @@ class CheckoutFragment : Fragment() {
             it?.let { a ->
                 binding.layoutAddressDetails.isVisible = true
                 binding.btnAddAddress.isVisible = false
-                binding.tvReceiverName.text  = a.name
+                binding.tvReceiverName.text = a.name
                 binding.tvReceiverPhone.text = a.phone
-                binding.tvAddressLine1.text  = a.address
-                binding.tvAddressLine2.text  = ""
+                binding.tvAddressLine1.text = a.address
+                binding.tvAddressLine2.text = ""
                 viewModel.setSelectedAddress(a)
             }
         }
@@ -183,14 +202,14 @@ class CheckoutFragment : Fragment() {
                 list.find { it.dfAddress }?.let { d ->
                     binding.layoutAddressDetails.isVisible = true
                     binding.btnAddAddress.isVisible = false
-                    binding.tvReceiverName.text  = d.name
+                    binding.tvReceiverName.text = d.name
                     binding.tvReceiverPhone.text = d.phone
-                    binding.tvAddressLine1.text  = d.address
-                    binding.tvAddressLine2.text  = ""
+                    binding.tvAddressLine1.text = d.address
+                    binding.tvAddressLine2.text = ""
                     viewModel.setSelectedAddress(d)
                 } ?: run {
                     binding.layoutAddressDetails.visibility = View.GONE
-                    binding.btnAddAddress.visibility        = View.VISIBLE
+                    binding.btnAddAddress.visibility = View.VISIBLE
                 }
             }
         }
