@@ -13,13 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hvuitsme.admin.adapter.OrderDetailAdapter
 import com.hvuitsme.admin.data.remote.OrderDataSource
 import com.hvuitsme.admin.data.repository.OrderRepoImpl
-import com.hvuitsme.admin.databinding.FragmentOrderDetailBinding
+import com.hvuitsme.admin.databinding.FragmentOrderDetailAdminBinding
 import com.hvuitsme.admin.ui.order.OrderViewModel
 import com.hvuitsme.admin.ui.order.OrderViewModelFactory
 
 class OrderDetailFragment : Fragment() {
 
-    private var _binding: FragmentOrderDetailBinding? = null
+    private var _binding: FragmentOrderDetailAdminBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: OrderViewModel
     private lateinit var detailAdapter: OrderDetailAdapter
@@ -35,7 +35,7 @@ class OrderDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentOrderDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentOrderDetailAdminBinding.inflate(inflater, container, false)
         return binding.root
     }
 

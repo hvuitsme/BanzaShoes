@@ -66,5 +66,5 @@
         android:id="@+id/orderDetailFragment"
         android:name="com.hvuitsme.admin.ui.orderdetail.OrderDetailFragment"
         android:label="fragment_order_detail"
-        tools:layout="@layout/fragment_order_detail" />
+        tools:layout="@layout/fragment_order_detail_admin" />
 </navigation>
