@@ -105,27 +105,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_user"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_marginEnd="@dimen/x2"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_user_solid" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/user"
-                    android:textColor="?attr/colorOnPrimary" />
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/ll_order"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"

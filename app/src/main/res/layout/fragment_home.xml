@@ -184,6 +184,7 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:itemIconPadding="50dp"
+        app:menu="@menu/menu"
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout

@@ -1,6 +1,5 @@
 package com.hvuitsme.banzashoes.ui.checkout
 
-import Order
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.hvuitsme.banzashoes.data.model.Address
 import com.hvuitsme.banzashoes.data.model.CartDisplayItem
+import com.hvuitsme.banzashoes.data.model.Order
 import com.hvuitsme.banzashoes.data.repository.CartRepo
 import com.hvuitsme.banzashoes.data.repository.CheckoutRepo
 import com.hvuitsme.banzashoes.payment.zalopay.ZaloPayRepository
@@ -95,7 +95,8 @@ class CheckoutViewModel(
                 paymentMethod = _paymentMethod.value ?: "COD",
                 subtotal      = subtotal.value ?: 0.0,
                 shipping      = shipping.value ?: 0.0,
-                total         = total.value ?: 0.0
+                total         = total.value ?: 0.0,
+                status        = "Pending"
             )
             val ok = checkoutRepo.createOrder(order)
             if (ok) {

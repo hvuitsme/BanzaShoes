@@ -1,7 +1,7 @@
 package com.hvuitsme.banzashoes.data.remote
 
-import Order
 import com.google.firebase.database.FirebaseDatabase
+import com.hvuitsme.banzashoes.data.model.Order
 import kotlinx.coroutines.tasks.await
 
 class CheckoutDataSource {

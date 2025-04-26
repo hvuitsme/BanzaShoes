@@ -114,6 +114,40 @@ class HomeFragment : Fragment() {
             }
         })
 
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.my_order -> {
+                    binding.homeDrawLayout.closeDrawers()
+
+                    binding.homeDrawLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+                        override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+                        override fun onDrawerOpened(drawerView: View) {}
+                        override fun onDrawerClosed(drawerView: View) {
+                            binding.homeDrawLayout.removeDrawerListener(this)
+
+                            val navOptions = navOptions {
+                                anim {
+                                    enter = R.anim.slide_in_from_right
+                                    exit = R.anim.slide_out_to_left
+                                    popEnter = R.anim.pop_slide_in_from_left
+                                    popExit = R.anim.pop_slide_out_from_right
+                                }
+                            }
+                            findNavController().navigate(
+                                R.id.action_homeFragment_to_myOrderFragment,
+                                null,
+                                navOptions
+                            )
+                        }
+
+                        override fun onDrawerStateChanged(newState: Int) {}
+                    })
+                    true
+                }
+                else -> false
+            }
+        }
+
         val searchView = binding.topAppBar.findViewById<SearchView>(R.id.searchView)
 
         val closeButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)

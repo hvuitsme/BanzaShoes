@@ -59,4 +59,6 @@
     <string name="address">Address</string>
     <string name="choose_address">Choose address</string>
     <string name="edit">Edit</string>
+    <string name="my_order">My order</string>
+    <string name="empty_order">You have no orders yet</string>
 </resources>

@@ -1,15 +1,14 @@
-import com.hvuitsme.banzashoes.data.model.Address
-import com.hvuitsme.banzashoes.data.model.CartDisplayItem
+package com.hvuitsme.banzashoes.data.model
 
 data class Order(
     var id: String = "",
     val userId: String = "",
-    val address: Address,
-    val cartItems: List<CartDisplayItem>,
-    val paymentMethod: String,
-    val subtotal: Double,
-    val shipping: Double,
-    val total: Double,
+    val address: Address = Address(),
+    val cartItems: List<CartDisplayItem> = emptyList(),
+    val paymentMethod: String = "",
+    val subtotal: Double = 0.0,
+    val shipping: Double = 0.0,
+    val total: Double = 0.0,
     val status: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )

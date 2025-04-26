@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_myOrderFragment"
+            app:destination="@id/myOrderFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
@@ -101,4 +104,27 @@
         android:name="com.hvuitsme.banzashoes.ui.address.AddAddressFragment"
         android:label="fragment_add_address"
         tools:layout="@layout/fragment_add_address" />
+    <fragment
+        android:id="@+id/myOrderFragment"
+        android:name="com.hvuitsme.banzashoes.ui.order.MyOrderFragment"
+        android:label="fragment_my_order"
+        tools:layout="@layout/fragment_my_order" >
+        <action
+            android:id="@+id/action_myOrderFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+        <action
+            android:id="@+id/action_myOrderFragment_to_orderDetailFragment2"
+            app:destination="@id/orderDetailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailFragment2"
+        android:name="com.hvuitsme.banzashoes.ui.order.OrderDetailFragment"
+        android:label="OrderDetailFragment" >
+        <action
+            android:id="@+id/action_orderDetailFragment2_to_addressFragment"
+            app:destination="@id/addressFragment" />
+        <action
+            android:id="@+id/action_orderDetailFragment2_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+    </fragment>
 </navigation>
