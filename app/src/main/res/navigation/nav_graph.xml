@@ -51,7 +51,14 @@
         android:id="@+id/detailFragment"
         android:name="com.hvuitsme.banzashoes.ui.detail.DetailFragment"
         android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" />
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_signinFragment"
+            app:destination="@id/signinFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signupFragment"
         android:name="com.hvuitsme.banzashoes.ui.auth.SignupFragment"

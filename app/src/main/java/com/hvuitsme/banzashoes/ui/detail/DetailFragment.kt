@@ -7,17 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
+import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.ImageDetailAdapter
 import com.hvuitsme.banzashoes.adapter.SizeAdapter
+import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.data.model.Product
 import com.hvuitsme.banzashoes.data.remote.CartDataSource
 import com.hvuitsme.banzashoes.data.remote.FirebaseDataSource
 import com.hvuitsme.banzashoes.data.repository.BanzaRepoImpl
 import com.hvuitsme.banzashoes.data.repository.CartRepoImpl
 import com.hvuitsme.banzashoes.databinding.FragmentDetailBinding
+import com.hvuitsme.banzashoes.service.GoogleAuthClient
 import com.hvuitsme.banzashoes.ui.cart.CartViewModel
 import com.hvuitsme.banzashoes.ui.cart.CartViewModelFactory
-import com.hvuitsme.banzashoes.ui.detail.AddToCartBTSDFragment
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 class DetailFragment : Fragment() {
@@ -33,6 +38,8 @@ class DetailFragment : Fragment() {
     private lateinit var cartViewModel: CartViewModel
 
     private lateinit var imageDetailAdapter: ImageDetailAdapter
+    private lateinit var googleAuthClinet: GoogleAuthClient
+
     private var currentProduct: Product? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +65,7 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        googleAuthClinet = GoogleAuthClient(requireContext())
 
         binding.detailToolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -81,12 +89,71 @@ class DetailFragment : Fragment() {
             }
         }
 
+        val navOptions = navOptions {
+            anim {
+                enter = R.anim.slide_in_from_right
+                exit = R.anim.slide_out_to_left
+                popEnter = R.anim.pop_slide_in_from_left
+                popExit = R.anim.pop_slide_out_from_right
+            }
+        }
+
         binding.addToCart.setOnClickListener {
             currentProduct?.let { product ->
-                val bottomSheet = AddToCartBTSDFragment(product) { selectedSize, qty ->
-                    cartViewModel.addOrUpdateCartItem(product.id, qty, selectedSize.size)
+                if (FirebaseAuth.getInstance().currentUser != null || googleAuthClinet.isSingedIn()) {
+                    val bottomSheet = AddToCartBTSDFragment(product) { selectedSize, qty ->
+                        cartViewModel.addOrUpdateCartItem(product.id, qty, selectedSize.size)
+                    }
+                    bottomSheet.show(childFragmentManager, "AddToCartBottomSheet")
+                }else{
+                    findNavController().navigate(R.id.action_detailFragment_to_signinFragment, null, navOptions)
                 }
-                bottomSheet.show(childFragmentManager, "AddToCartBottomSheet")
+            }
+        }
+
+        binding.buyBtn.setOnClickListener {
+            currentProduct?.let { product ->
+                if (FirebaseAuth.getInstance().currentUser != null ||
+                    googleAuthClinet.isSingedIn()
+                ) {
+                    val bottomSheet = AddToCartBTSDFragment(product) { selectedSize, qty ->
+                        val cartItem = CartDisplayItem(
+                            productId   = product.id,
+                            title       = product.title,
+                            price       = product.price,
+                            size        = selectedSize.size,
+                            quantity    = qty,
+                            imageUrls    = product.imageUrls.firstOrNull().orEmpty()
+                        )
+
+                        val cartJson = Gson().toJson(listOf(cartItem))
+
+                        val subtotal = cartItem.price * cartItem.quantity
+                        val shipping = 0.0
+                        val total    = subtotal + shipping
+
+                        val bundle = Bundle().apply {
+                            putString("cartItems", cartJson)
+                            putDouble("subtotal", subtotal)
+                            putDouble("shipping", shipping)
+                            putDouble("total", total)
+                        }
+
+                        findNavController().navigate(
+                            R.id.action_detailFragment_to_checkoutFragment,
+                            bundle,
+                            navOptions
+                        )
+                    }
+
+                    bottomSheet.show(childFragmentManager, "AddToCartBottomSheet")
+                } else {
+                    findNavController().navigate(
+                        R.id.action_detailFragment_to_signinFragment,
+                        null,
+                        navOptions
+                    )
+                }
             }
         }
     }
