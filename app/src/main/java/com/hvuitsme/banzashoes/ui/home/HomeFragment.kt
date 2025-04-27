@@ -449,8 +449,12 @@ class HomeFragment : Fragment() {
 
     private fun updateUi() {
         val llSignout = binding.llSignout
+        val menu = binding.navView.menu
         val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
+        val isSignedIn = currentUser != null
+
+        menu.setGroupVisible(R.id.group_menu, isSignedIn)
+        if (isSignedIn) {
             headerBinding.tvName.visibility = View.VISIBLE
             headerBinding.tvName.text = currentUser.displayName ?: "User"
             headerBinding.tvEmail.visibility = View.VISIBLE
