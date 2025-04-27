@@ -217,6 +217,7 @@ class CheckoutFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        addressViewModel.setSelectedAddress(null)
         _binding = null
     }
 }
