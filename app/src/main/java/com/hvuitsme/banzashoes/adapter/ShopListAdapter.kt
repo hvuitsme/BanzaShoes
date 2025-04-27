@@ -31,6 +31,7 @@ class ShopListAdapter(
         fun bind(item: CartDisplayItem) {
             binding.tvTitle.text = item.title
             binding.tvPrice.text = "$${"%.2f".format(item.price)}"
+            binding.tvSize.text = "Size: ${item.size}"
             binding.tvQty.text = "x${item.quantity}"
             Glide.with(binding.ivProduct.context)
                 .load(item.imageUrls)

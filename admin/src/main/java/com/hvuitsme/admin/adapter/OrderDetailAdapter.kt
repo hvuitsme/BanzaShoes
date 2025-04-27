@@ -16,6 +16,7 @@ class OrderDetailAdapter(
         fun bind(item: OrderItem) {
             binding.tvTitle.text = item.title
             binding.tvPrice.text = "$${item.price}"
+            binding.tvSize.text = "Size: ${item.size}"
             binding.tvQty.text = "Qty: ${item.quantity}"
             Glide.with(binding.ivProduct.context)
                 .load(item.imageUrls)
