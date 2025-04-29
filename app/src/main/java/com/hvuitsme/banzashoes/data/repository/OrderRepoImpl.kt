@@ -1,15 +1,18 @@
 package com.hvuitsme.banzashoes.data.repository
 
 import com.hvuitsme.banzashoes.data.model.Address
+import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.data.model.Order
+import com.hvuitsme.banzashoes.data.model.Review
 import com.hvuitsme.banzashoes.data.remote.OrderDataSource
 
 class OrderRepoImpl(
     private val dataSource: OrderDataSource
-): OrderRepo {
+) : OrderRepo {
     override fun observeOrders(userId: String, onDataChange: (List<Order>) -> Unit) {
         dataSource.observeOrdersByUser(userId, onDataChange)
     }
+
     override suspend fun getOrders(userId: String): List<Order> {
         return dataSource.getOrdersByUser(userId)
     }
@@ -21,4 +24,16 @@ class OrderRepoImpl(
     override suspend fun updateAddress(orderId: String, address: Address) {
         return dataSource.updateAddress(orderId, address)
     }
+
+    override suspend fun addProductReview(
+        productId: String,
+        review: Review
+    ) {
+        return dataSource.addProductReview(productId, review)
+    }
+
+    override suspend fun markOrderReviewed(orderId: String) {
+        return dataSource.markOrderReviewed(orderId)
+    }
+
 }

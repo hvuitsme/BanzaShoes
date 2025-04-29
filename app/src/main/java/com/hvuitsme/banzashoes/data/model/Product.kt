@@ -10,5 +10,5 @@ data class Product(
     val rating: Double = 0.0,
     val imageUrls: List<String> = emptyList(),
     val sizes: List<Size> = emptyList(),
-    val reviews: List<Review> = emptyList()
+    val reviews: Map<String, Review> = emptyMap()
 )

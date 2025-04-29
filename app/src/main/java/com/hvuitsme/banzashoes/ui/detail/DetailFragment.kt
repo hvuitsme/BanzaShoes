@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.hvuitsme.banzashoes.R
 import com.hvuitsme.banzashoes.adapter.ImageDetailAdapter
+import com.hvuitsme.banzashoes.adapter.ReviewDisplayAdapter
 import com.hvuitsme.banzashoes.adapter.SizeAdapter
 import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.data.model.Product
@@ -164,5 +166,13 @@ class DetailFragment : Fragment() {
         binding.tvPrice.text = "$${product.price}"
         binding.ivRating.text = "${product.rating}/5"
         imageDetailAdapter.updateDataImage(product.imageUrls)
+        binding.tvReviewCount.text = "Review (${product.reviews.size})"
+        if (product.reviews.isNotEmpty()) {
+            binding.rvReviews.visibility = View.VISIBLE
+            binding.rvReviews.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvReviews.adapter = ReviewDisplayAdapter(product.reviews.values.toList())
+        } else {
+            binding.rvReviews.visibility = View.GONE
+        }
     }
 }

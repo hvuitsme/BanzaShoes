@@ -30,15 +30,7 @@ class OrderListFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: OrderAdapter
     private val statusFilter by lazy { arguments?.getString(ARG_STATUS) ?: "" }
-    private lateinit var viewModel: MyOrderViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val repository = OrderRepoImpl(OrderDataSource())
-        val factory = MyOrderViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[MyOrderViewModel::class]
-    }
+    private val viewModel by viewModels<MyOrderViewModel> { MyOrderViewModelFactory(OrderRepoImpl(OrderDataSource())) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentOrderListBinding.inflate(inflater, container, false)
@@ -46,16 +38,17 @@ class OrderListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val navOptions = navOptions {
+            anim {
+                enter = R.anim.slide_in_from_right
+                exit = R.anim.slide_out_to_left
+                popEnter = R.anim.pop_slide_in_from_left
+                popExit = R.anim.pop_slide_out_from_right
+            }
+        }
+
         adapter = OrderAdapter(
             onItemClicked = { order ->
-                val navOptions = navOptions {
-                    anim {
-                        enter = R.anim.slide_in_from_right
-                        exit = R.anim.slide_out_to_left
-                        popEnter = R.anim.pop_slide_in_from_left
-                        popExit = R.anim.pop_slide_out_from_right
-                    }
-                }
                 findNavController().navigate(
                     R.id.action_myOrderFragment_to_orderDetailFragment2,
                     Bundle().apply { putString("orderId", order.id) },
@@ -78,14 +71,6 @@ class OrderListFragment : Fragment() {
                             putDouble("total", total)
                         }
 
-                        val navOptions = navOptions {
-                            anim {
-                                enter = R.anim.slide_in_from_right
-                                exit = R.anim.slide_out_to_left
-                                popEnter = R.anim.pop_slide_in_from_left
-                                popExit = R.anim.pop_slide_out_from_right
-                            }
-                        }
                         findNavController().navigate(
                             R.id.action_myOrderFragment_to_checkoutFragment,
                             bundle,
@@ -93,7 +78,17 @@ class OrderListFragment : Fragment() {
                         )
 
                     }
-                    OrderAdapter.Action.CHANGE_ADDRESS -> TODO()
+                    OrderAdapter.Action.REVIEW -> {
+                        val cartJson = Gson().toJson(order.cartItems)
+                        findNavController().navigate(
+                            R.id.action_myOrderFragment_to_reviewFragment,
+                            Bundle().apply {
+                                putString("cartItems", cartJson)
+                                putString("orderId", order.id)
+                            },
+                            navOptions
+                        )
+                    }
                 }
             }
         )

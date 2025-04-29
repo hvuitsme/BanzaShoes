@@ -16,7 +16,7 @@ class OrderAdapter(
     private val onAction: (Order, Action) -> Unit
 ) : ListAdapter<Order, OrderAdapter.VH>(DiffCallback()) {
 
-    enum class Action { CANCEL, CHANGE_ADDRESS, REORDER }
+    enum class Action { CANCEL, REVIEW, REORDER }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemMyOrderBinding.inflate(
@@ -32,7 +32,8 @@ class OrderAdapter(
     inner class VH(private val b: ItemMyOrderBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(o: Order) {
             b.tvOrderId.text = "Order ID: ${o.id}"
-            b.tvTotal.text = NumberFormat.getCurrencyInstance(Locale.getDefault()).format(o.total)
+//            b.tvTotal.text = NumberFormat.getCurrencyInstance(Locale.getDefault()).format(o.total)
+            b.tvTotal.text = "$${o.total}"
             b.rvProducts.adapter = ProductThumbAdapter(o.cartItems)
             b.root.setOnClickListener { onItemClicked(o) }
             when (o.status) {
@@ -40,14 +41,29 @@ class OrderAdapter(
                     b.btnAction1.visibility = View.VISIBLE
                     b.btnAction1.text = "Cancel"
                     b.btnAction1.setOnClickListener { onAction(o, Action.CANCEL) }
+                    b.btnAction2.visibility = View.GONE
                 }
-                "Success", "Cancelled" -> {
+                "Success" -> {
                     b.btnAction1.visibility = View.VISIBLE
                     b.btnAction1.text = "Reorder"
                     b.btnAction1.setOnClickListener { onAction(o, Action.REORDER) }
+                    if (!o.reviewed){
+                        b.btnAction2.visibility = View.VISIBLE
+                        b.btnAction2.text = "Review"
+                        b.btnAction2.setOnClickListener { onAction(o, Action.REVIEW) }
+                    }else{
+                        b.btnAction2.visibility = View.GONE
+                    }
+                }
+                "Cancelled" -> {
+                    b.btnAction1.visibility = View.VISIBLE
+                    b.btnAction1.text = "Reorder"
+                    b.btnAction1.setOnClickListener { onAction(o, Action.REORDER) }
+                    b.btnAction2.visibility = View.GONE
                 }
                 else -> {
                     b.btnAction1.visibility = View.GONE
+                    b.btnAction2.visibility = View.GONE
                 }
             }
         }

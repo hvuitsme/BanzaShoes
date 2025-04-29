@@ -10,6 +10,8 @@
         android:id="@+id/nsv_detail"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,8 +117,7 @@
                 android:id="@+id/rv_reviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/x2"
-                android:visibility="gone"
+                android:paddingHorizontal="@dimen/x2"
                 app:layout_constraintTop_toBottomOf="@id/tv_review_count" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -124,12 +125,14 @@
     </androidx.core.widget.NestedScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/x2"
-        android:paddingBottom="@dimen/x2"
         android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:paddingBottom="@dimen/x2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="20dp">
 
         <TextView
             android:id="@+id/tv_price"

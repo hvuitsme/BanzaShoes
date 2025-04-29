@@ -40,6 +40,15 @@ class OrderDetailFragment : Fragment() {
             adapter = shopAdapter
         }
 
+        val navOptions = navOptions {
+            anim {
+                enter = R.anim.slide_in_from_right
+                exit = R.anim.slide_out_to_left
+                popEnter = R.anim.pop_slide_in_from_left
+                popExit = R.anim.pop_slide_out_from_right
+            }
+        }
+
         vm.orders.observe(viewLifecycleOwner) { list ->
             list.find { it.id == currentOrderId }?.let { o ->
                 b.tvDetailOrderId.text = "Order ID: ${o.id}"
@@ -61,15 +70,6 @@ class OrderDetailFragment : Fragment() {
                             putDouble("shipping", o.shipping)
                             putDouble("total", o.total)
                         }
-
-                        val navOptions = navOptions {
-                            anim {
-                                enter = R.anim.slide_in_from_right
-                                exit = R.anim.slide_out_to_left
-                                popEnter = R.anim.pop_slide_in_from_left
-                                popExit = R.anim.pop_slide_out_from_right
-                            }
-                        }
                         findNavController().navigate(
                             R.id.action_orderDetailFragment2_to_checkoutFragment,
                             bundle,
@@ -77,20 +77,25 @@ class OrderDetailFragment : Fragment() {
                         )
                     }
                 }
+                b.btnAction2.text = if (o.status == "Success") "Review" else ""
+                b.btnAction2.visibility = if (o.status == "Success" && !o.reviewed) View.VISIBLE else View.GONE
+                if (o.status == "Success") b.btnAction2.setOnClickListener {
+                    val cartJson = Gson().toJson(o.cartItems)
+                    findNavController().navigate(
+                        R.id.action_orderDetailFragment2_to_reviewFragment,
+                        Bundle().apply {
+                            putString("cartItems", cartJson)
+                            putString("orderId", o.id)
+                        },
+                        navOptions
+                    )
+                }
                 shopAdapter.updateItems(o.cartItems)
             }
         }
         vm.loadOnce()
 
         b.tvDetailAddress.setOnClickListener {
-            val navOptions = navOptions {
-                anim {
-                    enter = R.anim.slide_in_from_right
-                    exit = R.anim.slide_out_to_left
-                    popEnter = R.anim.pop_slide_in_from_left
-                    popExit = R.anim.pop_slide_out_from_right
-                }
-            }
             findNavController().navigate(R.id.action_orderDetailFragment2_to_addressFragment, null, navOptions)
         }
 

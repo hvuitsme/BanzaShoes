@@ -122,6 +122,9 @@
         <action
             android:id="@+id/action_myOrderFragment_to_orderDetailFragment2"
             app:destination="@id/orderDetailFragment2" />
+        <action
+            android:id="@+id/action_myOrderFragment_to_reviewFragment"
+            app:destination="@id/reviewFragment" />
     </fragment>
     <fragment
         android:id="@+id/orderDetailFragment2"
@@ -133,5 +136,12 @@
         <action
             android:id="@+id/action_orderDetailFragment2_to_checkoutFragment"
             app:destination="@id/checkoutFragment" />
+        <action
+            android:id="@+id/action_orderDetailFragment2_to_reviewFragment"
+            app:destination="@id/reviewFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/reviewFragment"
+        android:name="com.hvuitsme.banzashoes.ui.order.ReviewFragment"
+        android:label="ReviewFragment" />
 </navigation>

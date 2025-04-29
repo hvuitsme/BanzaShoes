@@ -98,6 +98,16 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/x1"
         android:layout_marginBottom="@dimen/x1"
+        app:layout_constraintBottom_toTopOf="@id/btnAction2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnAction2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/x1"
+        android:layout_marginBottom="@dimen/x1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

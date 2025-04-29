@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.hvuitsme.banzashoes.data.model.Address
+import com.hvuitsme.banzashoes.data.model.CartDisplayItem
 import com.hvuitsme.banzashoes.data.model.Order
+import com.hvuitsme.banzashoes.data.model.Review
 import com.hvuitsme.banzashoes.data.repository.OrderRepo
 import kotlinx.coroutines.launch
 
@@ -16,6 +18,9 @@ class MyOrderViewModel(
 
     private val _orders = MutableLiveData<List<Order>>(emptyList())
     val orders: LiveData<List<Order>> = _orders
+
+    private val _reviewSubmitted = MutableLiveData<Boolean>()
+    val reviewSubmitted: LiveData<Boolean> = _reviewSubmitted
 
     init {
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -44,6 +49,13 @@ class MyOrderViewModel(
         }
     }
 
-    fun reorder(order: Order) {
+    fun submitReviews(orderId: String, reviews: List<Pair<String, Review>>) = viewModelScope.launch {
+        reviews.forEach { (productId, review) ->
+            if (review.rating > 0) {
+                orderRepository.addProductReview(productId, review)
+            }
+        }
+        orderRepository.markOrderReviewed(orderId)
+        _reviewSubmitted.postValue(true)
     }
 }

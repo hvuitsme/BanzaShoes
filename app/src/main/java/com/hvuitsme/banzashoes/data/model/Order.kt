@@ -10,5 +10,6 @@ data class Order(
     val shipping: Double = 0.0,
     val total: Double = 0.0,
     val status: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val reviewed: Boolean = false
 )
