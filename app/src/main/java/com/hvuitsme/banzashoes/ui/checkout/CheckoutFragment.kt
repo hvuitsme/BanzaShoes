@@ -193,7 +193,6 @@ class CheckoutFragment : Fragment() {
                 binding.tvReceiverName.text = a.name
                 binding.tvReceiverPhone.text = a.phone
                 binding.tvAddressLine1.text = a.address
-                binding.tvAddressLine2.text = ""
                 viewModel.setSelectedAddress(a)
             }
         }
@@ -205,7 +204,6 @@ class CheckoutFragment : Fragment() {
                     binding.tvReceiverName.text = d.name
                     binding.tvReceiverPhone.text = d.phone
                     binding.tvAddressLine1.text = d.address
-                    binding.tvAddressLine2.text = ""
                     viewModel.setSelectedAddress(d)
                 } ?: run {
                     binding.layoutAddressDetails.visibility = View.GONE

@@ -45,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/x1"
+                android:layout_marginBottom="@dimen/x1"
                 app:layout_constraintTop_toBottomOf="@id/checkout_toolbar">
 
                 <com.google.android.material.button.MaterialButton
@@ -54,6 +55,7 @@
                     android:layout_height="60dp"
                     android:text="+ Add address"
                     android:clickable="false"
+                    android:visibility="gone"
                     android:textColor="?attr/colorOnPrimary"
                     app:strokeColor="?attr/colorOnPrimary"/>
 
@@ -63,8 +65,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/x1"
-                    android:visibility="gone">
+                    android:paddingHorizontal="@dimen/x1">
 
                     <ImageView
                         android:id="@+id/imgLocation"
@@ -82,9 +83,10 @@
                         android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
                             <TextView
                                 android:id="@+id/tvReceiverName"
@@ -109,14 +111,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:textColor="@android:color/darker_gray"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tvAddressLine2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:textColor="@android:color/darker_gray"
                             android:textSize="14sp" />
                     </LinearLayout>
