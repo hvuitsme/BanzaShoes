@@ -172,8 +172,7 @@ class BrandFragment : Fragment() {
                     cateId = autoCateId,
                     rating = 0.0,
                     imageUrls = currentDialogImageUrls,
-                    sizes = sizes,
-                    reviews = emptyList()
+                    sizes = sizes
                 )
             }
             viewModel.saveProduct(newProduct)
