@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
@@ -66,6 +67,9 @@ class HomeFragment : Fragment() {
     private lateinit var productAdapter: ProductAdapter
     private lateinit var searchAdapter: SearchProductAdapter
 
+    private var doubleBackToExitPressedOnce = false
+    private var backToast: Toast? = null
+
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
             carousel.setCurrentItem(carousel.currentItem + 1, true)
@@ -109,7 +113,20 @@ class HomeFragment : Fragment() {
                 if (isSearchOpen) {
                     closeSearch()
                 } else {
-                    findNavController().popBackStack()
+                    if (doubleBackToExitPressedOnce) {
+                        backToast?.cancel()
+                        requireActivity().finish()
+                    } else {
+                        doubleBackToExitPressedOnce = true
+                        backToast = Toast.makeText(
+                            requireContext(),
+                            "Press back again to exit",
+                            Toast.LENGTH_SHORT
+                        ).also { it.show() }
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            doubleBackToExitPressedOnce = false
+                        }, 2000)
+                    }
                 }
             }
         })
@@ -135,6 +152,34 @@ class HomeFragment : Fragment() {
                             }
                             findNavController().navigate(
                                 R.id.action_homeFragment_to_myOrderFragment,
+                                null,
+                                navOptions
+                            )
+                        }
+
+                        override fun onDrawerStateChanged(newState: Int) {}
+                    })
+                    true
+                }
+                R.id.address ->{
+                    binding.homeDrawLayout.closeDrawers()
+
+                    binding.homeDrawLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+                        override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+                        override fun onDrawerOpened(drawerView: View) {}
+                        override fun onDrawerClosed(drawerView: View) {
+                            binding.homeDrawLayout.removeDrawerListener(this)
+
+                            val navOptions = navOptions {
+                                anim {
+                                    enter = R.anim.slide_in_from_right
+                                    exit = R.anim.slide_out_to_left
+                                    popEnter = R.anim.pop_slide_in_from_left
+                                    popExit = R.anim.pop_slide_out_from_right
+                                }
+                            }
+                            findNavController().navigate(
+                                R.id.action_homeFragment_to_addressFragment,
                                 null,
                                 navOptions
                             )
@@ -456,11 +501,11 @@ class HomeFragment : Fragment() {
         menu.setGroupVisible(R.id.group_menu, isSignedIn)
         if (isSignedIn) {
             headerBinding.tvName.visibility = View.VISIBLE
-            headerBinding.tvName.text = currentUser.displayName ?: "User"
+            headerBinding.tvName.text = currentUser?.displayName ?: "User"
             headerBinding.tvEmail.visibility = View.VISIBLE
-            headerBinding.tvEmail.text = currentUser.email
+            headerBinding.tvEmail.text = currentUser?.email
             Glide.with(this)
-                .load(currentUser.photoUrl)
+                .load(currentUser?.photoUrl)
                 .placeholder(R.drawable.ic_guest)
                 .into(headerBinding.avatar)
             llSignout.visibility = View.VISIBLE

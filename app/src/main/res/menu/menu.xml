@@ -7,5 +7,10 @@
             android:id="@+id/my_order"
             android:icon="@drawable/ic_order"
             android:title="@string/my_order"/>
+
+        <item
+            android:id="@+id/address"
+            android:icon="@drawable/ic_location_solid"
+            android:title="@string/address"/>
     </group>
 </menu>
