@@ -30,6 +30,14 @@ class AddressViewModel(
 
     fun addAddress(address: Address, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
+            if (address.dfAddress) {
+                val orther = repository.getAddress(address.userId)
+                    .filter { it.dfAddress }
+                orther.forEach { old ->
+                    val updated = old.copy(dfAddress = false)
+                    repository.updateAddress(updated)
+                }
+            }
             val success = repository.addAddress(address)
             if (success) _addressList.value = repository.getAddress(address.userId)
             onResult(success)
@@ -38,12 +46,20 @@ class AddressViewModel(
 
     fun updateAddress(address: Address, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val success = repository.updateAddress(address)
-            if (success) {
-                _addressList.value = repository.getAddress(address.userId)
-                _selectedAddress.value = null
+            if (address.dfAddress) {
+                val orther = repository.getAddress(address.userId)
+                    .filter { it.dfAddress && it.id != address.id }
+                orther.forEach { old ->
+                    val updated = old.copy(dfAddress = false)
+                    repository.updateAddress(updated)
+                }
+                val success = repository.updateAddress(address)
+                if (success) {
+                    _addressList.value = repository.getAddress(address.userId)
+                    _selectedAddress.value = null
+                }
+                onResult(success)
             }
-            onResult(success)
         }
     }
 
