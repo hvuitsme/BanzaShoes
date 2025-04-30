@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:141072870748:android:ee8df1bf20377bb8f22599",
+        "android_client_info": {
+          "package_name": "com.hvuitsme.admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "141072870748-gmlbfu0oiacfu7om8i15djus5s0tnf8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hvuitsme.admin",
+            "certificate_hash": "c7b740d1d0b47718968209a00d9284b2b925031e"
+          }
+        },
+        {
+          "client_id": "141072870748-tplk4uo4kbrlk2q9cfc2ok9ssfi92cf0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9WBxeu39yWHU9wolA_QJv_DmfdLQPLfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "141072870748-6blt2uc185kne4rqo13acde8hg7jqbr9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:141072870748:android:0f7f0bd520ae8244f22599",
         "android_client_info": {
           "package_name": "com.hvuitsme.banzashoes"
@@ -19,6 +56,43 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.hvuitsme.banzashoes",
+            "certificate_hash": "c7b740d1d0b47718968209a00d9284b2b925031e"
+          }
+        },
+        {
+          "client_id": "141072870748-tplk4uo4kbrlk2q9cfc2ok9ssfi92cf0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9WBxeu39yWHU9wolA_QJv_DmfdLQPLfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "141072870748-6blt2uc185kne4rqo13acde8hg7jqbr9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141072870748:android:de90571b98a83ef3f22599",
+        "android_client_info": {
+          "package_name": "com.hvuitsme.otp_send"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "141072870748-aqb039a8rijpgu2esqb4v96art20lngc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hvuitsme.otp_send",
             "certificate_hash": "c7b740d1d0b47718968209a00d9284b2b925031e"
           }
         },
