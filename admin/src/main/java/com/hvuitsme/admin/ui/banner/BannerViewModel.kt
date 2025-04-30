@@ -19,10 +19,10 @@ class BannerViewModel(
         }
     }
 
-    fun addBanner(url: String, publicId: String, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+    fun addBanner(url: String, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
         viewModelScope.launch {
             try {
-                repository.addBanner(Carousel(url = url, publicId = publicId))
+                repository.addBanner(Carousel(url = url))
                 loadCarousel()
                 onSuccess()
             } catch (e: Exception) {
@@ -31,10 +31,10 @@ class BannerViewModel(
         }
     }
 
-    fun updateBanner(oldUrl: String, newUrl: String, newPublicId: String, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+    fun updateBanner(oldUrl: String, newUrl: String, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
         viewModelScope.launch {
             try {
-                repository.updateBanner(oldUrl, Carousel(url = newUrl, publicId = newPublicId))
+                repository.updateBanner(oldUrl, Carousel(url = newUrl))
                 loadCarousel()
                 onSuccess()
             } catch (e: Exception) {

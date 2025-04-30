@@ -1,6 +1,5 @@
 package com.hvuitsme.admin.data.model
 
 data class Carousel(
-    val url: String = "",
-    val publicId: String = ""
+    val url: String = ""
 )

@@ -32,7 +32,6 @@ class BannerFragment : Fragment() {
     private lateinit var carouselAdapter: CarouselAdapter
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
     private var selectedImageUri: Uri? = null
-
     private var currentBannerToUpdate: Carousel? = null
 
     companion object {
@@ -43,7 +42,6 @@ class BannerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val repository = BannerRepoImpl(BannerDataResource())
         val factory = BannerViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[BannerViewModel::class.java]
@@ -61,7 +59,6 @@ class BannerFragment : Fragment() {
                             }
                         },
                         onReSelectImage = {
-                            it?.let {}
                             imagePickerLauncher.launch("image/*")
                         }
                     )
@@ -79,7 +76,6 @@ class BannerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.bannerToolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
@@ -102,8 +98,8 @@ class BannerFragment : Fragment() {
         binding.rvBanner.layoutManager = LinearLayoutManager(requireContext())
 
         viewModel.loadCarousel()
-        viewModel.carousel.observe(viewLifecycleOwner) { carouselItems ->
-            carouselAdapter.updateDataCarousel(carouselItems)
+        viewModel.carousel.observe(viewLifecycleOwner) { items ->
+            carouselAdapter.updateDataCarousel(items)
         }
     }
 
@@ -123,7 +119,6 @@ class BannerFragment : Fragment() {
         val ivEdit = dialogView.findViewById<ImageView>(R.id.ivEdit)
 
         ivPreview.setImageURI(selectedImageUri)
-
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .create()
@@ -132,7 +127,6 @@ class BannerFragment : Fragment() {
             dialog.dismiss()
             onReSelectImage()
         }
-
         btnOk.setOnClickListener {
             onImageConfirmed(selectedImageUri)
             dialog.dismiss()
@@ -147,7 +141,6 @@ class BannerFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete, null)
         val btnYes = dialogView.findViewById<Button>(R.id.btnYes)
         val btnNo = dialogView.findViewById<Button>(R.id.btnNo)
-
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .create()
@@ -155,23 +148,15 @@ class BannerFragment : Fragment() {
         btnYes.setOnClickListener {
             dialog.dismiss()
             lifecycleScope.launch {
-                try {
-                    if (banner.publicId.isEmpty()) {
-                        println("PublicId empty, cannot delete banner.")
-                        return@launch
-                    }
-                    val cloudResult = CloudinaryUploader.deleteImageBanner(banner.publicId)
-                    println("Cloudinary result: $cloudResult")
+                val publicId = extractPublicIdFromUrl(banner.url)
+                if (publicId != null) {
+                    val cloudResult = CloudinaryUploader.deleteImageBanner(publicId)
                     if (cloudResult) {
                         viewModel.deleteBanner(banner,
                             onSuccess = { },
-                            onError = { e -> println("Firebase error: ${e.message}") }
+                            onError = { }
                         )
-                    } else {
-                        println("Cloudinary delete failed.")
                     }
-                } catch (e: Exception) {
-                    println("Exception deleting banner: ${e.message}")
                 }
             }
         }
@@ -187,37 +172,45 @@ class BannerFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val inputStream = requireContext().contentResolver.openInputStream(imageUri)
-                    ?: throw Exception("Error open InputStream")
-                val (url, publicId) = CloudinaryUploader.uploadImageBanner(requireContext(), inputStream)
+                    ?: throw Exception("Error opening InputStream")
+                val (url, _) = CloudinaryUploader.uploadImageBanner(requireContext(), inputStream)
                 if (isUpdate && currentBannerToUpdate != null) {
                     viewModel.updateBanner(
                         oldUrl = currentBannerToUpdate!!.url,
                         newUrl = url,
-                        newPublicId = publicId,
-                        onSuccess = {},
-                        onError = { e ->}
+                        onSuccess = { currentBannerToUpdate = null },
+                        onError = {}
                     )
-                    currentBannerToUpdate = null
                 } else {
                     viewModel.addBanner(
                         url = url,
-                        publicId = publicId,
                         onSuccess = {},
-                        onError = { e ->}
+                        onError = {}
                     )
                 }
-            } catch (e: Exception) {
             } finally {
                 progressDialog.dismiss()
             }
         }
     }
 
+    private fun extractPublicIdFromUrl(url: String): String? {
+        return try {
+            val uploadMarker = "/upload/"
+            val uploadIndex = url.indexOf(uploadMarker)
+            if (uploadIndex == -1) return null
+            val substringAfter = url.substring(uploadIndex + uploadMarker.length)
+            val withoutVersion = Regex("""^v\d+/""").replace(substringAfter, "")
+            val dotIndex = withoutVersion.lastIndexOf('.')
+            if (dotIndex != -1) withoutVersion.substring(0, dotIndex) else withoutVersion
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun createProgressDialog(): Dialog {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(null)
-            .setMessage("Uploading...")
-            .setCancelable(false)
+        builder.setMessage("Uploading...").setCancelable(false)
         return builder.create()
     }
 
